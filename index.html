@@ -213,13 +213,13 @@ table.grid{border-collapse:separate;border-spacing:0;table-layout:fixed;font-siz
 .tbtn.trn.on{background:#2F6FED;border-color:#7EA6F5}
 #bFold svg{transition:transform .2s}
 body.fold #bFold svg{transform:rotate(180deg)}
-.sync{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;cursor:pointer;padding:4px 6px;border-radius:5px;white-space:nowrap}
-.sync:hover{background:rgba(255,255,255,.08)}
-.sync i{width:8px;height:8px;border-radius:50%;background:#94A3B8;display:inline-block}
-.sync.ok{color:#4ADE80}.sync.ok i{background:#4ADE80;box-shadow:0 0 0 3px rgba(74,222,128,.2)}
-.sync.local{color:#A7F3D0}.sync.local i{background:#6EE7B7}
-.sync.ing{color:#FDE68A}.sync.ing i{background:#FACC15;animation:pulse 1s infinite}
-.sync.err{color:#FCA5A5}.sync.err i{background:#F87171}
+.sync .cl{position:relative;display:flex}.sync .cl svg{width:20px;height:20px}
+.sync i{position:absolute;right:-3px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:#94A3B8;border:1.5px solid #13285A}
+.sync small{white-space:nowrap}
+.sync.ok small{color:#4ADE80}.sync.ok i{background:#4ADE80;box-shadow:0 0 0 3px rgba(74,222,128,.2)}
+.sync.local small{color:#A7F3D0}.sync.local i{background:#6EE7B7}
+.sync.ing small{color:#FDE68A}.sync.ing i{background:#FACC15;animation:pulse 1s infinite}
+.sync.err small{color:#FCA5A5}.sync.err i{background:#F87171}
 @keyframes pulse{50%{opacity:.3}}
 body.fold .panel,body.fold #dash{display:none}
 body.fold .tabs{margin-top:10px}
@@ -398,7 +398,7 @@ table.grid{border-top:3px solid #2B3954}
       <button class="tbtn trn" id="bTrans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><b id="transTxt"></b></button>
     </div>
     <div class="r">
-      <span class="sync local" id="syncSt"><i></i><span id="syncTxt"></span></span>
+      <button class="tbtn sync local" id="syncSt"><span class="cl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4.5 4.5 0 0 1-.5 9.5z"/><path d="M9.5 13.5l2.5-2.5 2.5 2.5M12 11v6"/></svg><i></i></span><span><b data-i18n="sync_btn"></b><small id="syncTxt"></small></span></button>
       <button class="tbtn" id="bView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><span><b data-i18n="view_report"></b><small data-i18n-sub="view_report"></small></span></button>
       <button class="tbtn" id="bFold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 15l6-6 6 6"/></svg><span><b id="foldTxt"></b><small id="foldSub"></small></span></button>
     </div>
@@ -634,7 +634,7 @@ const D = {
  translate_on:['Đang dịch nội dung','번역 표시 중','Translating content'],
  trans_tip:['Dịch tên hàng & ghi chú theo từ điển thuật ngữ kho (offline). Khi bật, các ô đã dịch chỉ để xem – tắt để sửa.','창고 용어 사전으로 품명·비고를 번역합니다(오프라인). 번역 중에는 해당 칸이 읽기 전용입니다.','Translates item names & remarks with a built-in warehouse glossary (offline). Translated cells are read-only while on.'],
  trans_ro:['Đang hiển thị bản dịch – tắt “Tự dịch nội dung” để sửa','번역 표시 중 – 수정하려면 자동 번역을 끄세요','Showing translation – turn off auto-translate to edit'],
- sync_ok:['Đồng bộ server','서버 동기화','Server synced'],
+ sync_ok:['Đã đồng bộ','동기화됨','Synced'], sync_btn:['Đồng bộ server','서버 동기화','Server sync'],
  sync_local:['Lưu cục bộ','로컬 저장','Saved locally'],
  sync_err:['Lỗi đồng bộ server','서버 동기화 오류','Server sync error'],
  sync_ing:['Đang đồng bộ…','동기화 중…','Syncing…'],
@@ -2599,7 +2599,7 @@ function renderSync(){
   if(SYNC.state==='ing'){cls='ing';txt=t('sync_ing');}
   else if(SYNC.state==='err'){cls='err';txt=t('sync_err');}
   else if(SYNC.url){cls='ok';txt=t('sync_ok')+(SYNC.last?' '+hm(SYNC.last):'');}
-  el.className='sync '+cls; $('#syncTxt').textContent=txt;
+  el.className='tbtn sync '+cls; $('#syncTxt').textContent=txt;
 }
 let pushT;
 function schedulePush(){ clearTimeout(pushT); pushT=setTimeout(()=>pushServer(true),3000); }
