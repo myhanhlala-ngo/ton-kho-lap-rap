@@ -293,6 +293,11 @@ body.fold .twrap{max-height:calc(100vh - 205px)}
 #lyTbl td{vertical-align:middle}
 #lyTbl tr.hid td{opacity:.55}
 #lyTbl tr.cus td{background:#F0FDF4}
+.lymv{width:62px;white-space:nowrap}.lymv button{width:26px;height:24px;border:1px solid #CBD5E1;background:#fff;border-radius:5px;cursor:pointer;font-size:10px;color:#1E3A8A;margin-right:3px}
+.lymv button:hover{background:#1E3A8A;color:#fff;border-color:#1E3A8A}
+.lysg{height:28px;border:1px solid #86C9A0;border-radius:6px;font-family:inherit;font-size:12px;max-width:125px;background:#fff}
+.lysub{display:block;color:#64748B;font-size:10.5px}
+#lyTbl tr.lyflash td{background:#FEF3C7!important;transition:background .6s}
 .xdel{border:0;background:#FDECEC;color:#B91C1C;border-radius:6px;padding:4px 9px;cursor:pointer;font-weight:700}
 .daysel{height:32px;min-width:190px;font-weight:700;color:#0F1E3D}
 .daybtns{display:flex;gap:8px;align-items:flex-end}
@@ -308,6 +313,17 @@ body.fold .twrap{max-height:calc(100vh - 205px)}
 .nddate{height:36px;border:1px solid var(--line);border-radius:6px;padding:0 10px;font-weight:700}
 .ndopts{display:flex;flex-direction:column;gap:6px;margin-top:12px}
 body.editing .tcard{box-shadow:0 0 0 2px #FBBF24,0 14px 30px -16px rgba(15,30,61,.38)!important}
+.wckw{width:100%;height:34px;border:1px solid var(--line);border-radius:6px;padding:0 10px;font-family:inherit}
+#wcTbl td,#wcTbl th{text-align:center}#wcTbl td:first-child,#wcTbl th:first-child{text-align:left}
+#wcTbl input{width:18px;height:18px;accent-color:#2563EB}
+.subtabs{display:flex;align-items:center;gap:8px;margin:-2px 0 12px;padding:8px 10px;background:#fff;border:1.5px solid #AEBACD;border-radius:10px;width:fit-content}
+.subtabs .lbl{font-weight:800;color:#2B3954;font-size:12.5px;padding:0 4px}
+.subtabs button{display:flex;align-items:center;gap:9px;height:40px;padding:0 14px;border:1.5px solid #CFD6E1;border-radius:8px;background:#F8FAFC;cursor:pointer;font-family:inherit;text-align:left}
+.subtabs button b{display:block;font-size:13.5px;color:#1E293B}.subtabs button small{display:block;font-size:10.5px;color:#64748B}
+.subtabs button .d{width:10px;height:10px;border-radius:50%}.subtabs .d.ok{background:#16A34A}.subtabs .d.ng{background:#DC2626}
+.subtabs button .cnt{background:#EEF1F5;color:#475569;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800}
+.subtabs button.on{border-color:#2B3954;background:#2B3954}.subtabs button.on b{color:#fff}.subtabs button.on small{color:#B8C2D6}
+.subtabs button.on .cnt{background:#F59E0B;color:#fff}
 .fxta{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-family:inherit;resize:vertical}
 #fxHist{margin-top:12px;font-size:11.5px;color:#64748B}
 #fxHist div{padding:4px 0;border-top:1px dashed #E2E8F0}
@@ -439,6 +455,11 @@ table.grid{border-top:3px solid #2B3954}
     <span id="c_log" hidden></span>
   </nav>
 
+  <div class="subtabs hide" id="subTabs">
+    <span class="lbl">Tồn INPUT ›</span>
+    <button data-v="inpok"><i class="d ok"></i><span><b data-i18n="tab_inpok"></b><small data-i18n-sub="tab_inpok"></small></span><span class="cnt" title="">0</span></button>
+    <button data-v="inpng"><i class="d ng"></i><span><b data-i18n="tab_inpng"></b><small data-i18n-sub="tab_inpng"></small></span><span class="cnt">0</span></button>
+  </div>
   <section id="dash">
     <div class="kpis" id="kpis"></div>
     <div class="charts">
@@ -453,6 +474,7 @@ table.grid{border-top:3px solid #2B3954}
       <button class="btn pri" id="bUp2" title=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg><span data-i18n="upload"></span> · <b class="upT"></b></button>
       <button class="btn" id="bFx" title=""><span>⚙</span><span data-i18n="fx_btn"></span></button>
       <button class="btn" id="bLay" title=""><span>🧩</span><span data-i18n="ly_btn"></span></button>
+      <button class="btn" id="bWc" title=""><span>🏷</span><span data-i18n="wc_btn"></span></button>
       <input class="search" id="q" data-i18n-ph="search_ph">
       <select class="sel" id="fModel"></select>
       <select class="sel" id="fSt">
@@ -502,7 +524,9 @@ table.grid{border-top:3px solid #2B3954}
     <p class="hint2" data-i18n="map_hint"></p>
     <p class="hint2" id="mpErp" style="display:none;background:#FFF7E0;border-color:#F5D58A;color:#7A4B00!important" data-i18n="map_erp"></p>
     <div class="mptbl" id="mpTbl"></div>
+    <p class="hint2" id="mpCat" style="display:none;background:#ECFDF3;border-color:#A7E3BD;color:#14532D!important"></p>
     <label class="chk" style="margin-top:12px"><input type="checkbox" id="mpAdd" checked> <span data-i18n="map_add"></span></label>
+    <label class="chk" id="mpCleanWrap" style="margin-top:6px;display:none"><input type="checkbox" id="mpClean"> <span id="mpCleanTxt"></span></label>
     <div class="mrow"><button class="btn pri" id="mpMerge" data-i18n="map_merge"></button><button class="btn dark" id="mpReplace" data-i18n="map_replace"></button><button class="btn" id="mpCancel" data-i18n="cancel"></button></div>
   </div>
 </div></div>
@@ -563,6 +587,19 @@ table.grid{border-top:3px solid #2B3954}
     <div class="mrow"><button class="btn pri" id="ndOk" data-i18n="nd_ok"></button><button class="btn" id="ndCancel" data-i18n="cancel"></button></div>
   </div>
 </div></div>
+<div class="modal" id="mWc"><div class="mbox" style="width:min(900px,100%)">
+  <div class="mhead"><b data-i18n="wc_title"></b><button class="btn" id="wcClose" data-i18n="close"></button></div>
+  <div class="mbody">
+    <p class="hint2" data-i18n="wc_hint"></p>
+    <div class="mptbl" id="wcTbl"></div>
+    <label class="l" data-i18n="wc_kw"></label>
+    <input type="text" id="wcKw" class="wckw">
+    <p class="hint" style="margin:4px 0 0" data-i18n="wc_kw_hint"></p>
+    <label class="l" data-i18n="wc_unk"></label>
+    <select class="sel" id="wcUnk"><option value="allow" data-i18n="wc_unk_allow"></option><option value="skip" data-i18n="wc_unk_skip"></option></select>
+    <div class="mrow"><button class="btn pri" id="wcSave" data-i18n="wc_save"></button><button class="btn" id="wcReset" data-i18n="fx_reset"></button><button class="btn" id="wcCancel" data-i18n="cancel"></button></div>
+  </div>
+</div></div>
 <div class="modal" id="mSync"><div class="mbox">
   <div class="mhead"><b data-i18n="m_sync"></b><button class="btn" id="syClose" data-i18n="close"></button></div>
   <div class="mbody">
@@ -620,6 +657,16 @@ const D = {
  map_hint:['Cột được ghép theo NỘI DUNG tiêu đề (Việt / Hàn / Anh, có dấu hay không dấu, kể cả tiêu đề nhóm gộp ô) – không phụ thuộc vị trí cột/dòng. Cột Tổng/Chênh lệch luôn được tính lại.','머리글 내용(베트남어/한국어/영어, 병합된 그룹 머리글 포함)으로 열을 매핑하며 열·행 위치와 무관합니다. 합계/차이는 항상 재계산됩니다.','Columns are matched by header MEANING (VN / KR / EN, with or without accents, merged group headers included) – independent of column/row position. Totals and variance are always recalculated.'],
  map_field:['Hạng mục trong hệ thống','시스템 항목','System field'], map_col:['Cột nhận diện trong file (cột · tiêu đề)','파일에서 인식된 열 (열 · 머리글)','Detected column in file (column · header)'],
  map_none:['không tìm thấy – giữ nguyên dữ liệu hiện tại','찾지 못함 – 기존 값 유지','not found – current values kept'],
+ wc_save:['Lưu quy tắc','규칙 저장','Save rules'], wc_btn:['Phân loại kho','창고 분류','Warehouse rules'], wc_title:['🏷 Phân loại mã theo kho (품목계정)','🏷 창고별 품목계정 분류','🏷 Item account rules per warehouse'],
+ wc_hint:['Khi upload file ERP có cột <b>품목계정 / phân loại</b>, mỗi kho chỉ nhận những mã thuộc phân loại được tích bên dưới. Mã thuộc kho khác bị bỏ qua (không cập nhật, không thêm mới) và có thể dọn khỏi kho. Phím & linh kiện nhỏ được nhận diện theo <b>từ khóa trong tên hàng</b>.','<b>품목계정</b> 열이 있는 ERP 파일 업로드 시 각 창고는 아래에 체크된 분류의 품목만 받습니다. 다른 창고 품목은 제외되며 정리할 수 있습니다. 키·소형 부품은 <b>품명 키워드</b>로 판별합니다.','When an ERP file with an <b>item account (품목계정)</b> column is uploaded, each warehouse only accepts the ticked categories. Codes of other warehouses are skipped and can be cleaned out. Keys & small parts are detected by <b>keywords in the item name</b>.'],
+ wc_kw:['Từ khóa nhận diện “phím & linh kiện nhỏ” trong tên hàng (cách nhau bằng dấu phẩy)','“키·소형 부품” 품명 키워드 (쉼표로 구분)','Keywords for “keys & small parts” in item name (comma separated)'],
+ wc_kw_hint:['VD: KEY, BUTTON, VOLUME KEY, SIDE KEY, SIM TRAY … Khớp theo từ nguyên vẹn, không phân biệt hoa thường/dấu.','예: KEY, BUTTON, VOLUME KEY … 단어 단위, 대소문자 무시.','e.g. KEY, BUTTON, VOLUME KEY … whole-word match, case/accent-insensitive.'],
+ wc_unk:['Mã không có phân loại trong file','파일에 분류가 없는 코드','Codes without a category in the file'], wc_unk_allow:['Vẫn nhận vào kho đang chọn','현재 창고에 반영','Accept into the active warehouse'], wc_unk_skip:['Bỏ qua','제외','Skip'],
+ wc_info:['🏷 Lọc theo phân loại cho kho <b>{k}</b> (nhận: {a}) → giữ <b>{n}</b> mã, bỏ qua <b>{d}</b> mã thuộc kho khác.','🏷 <b>{k}</b> 분류 필터 (허용: {a}) → <b>{n}</b>개 반영, 다른 창고 품목 <b>{d}</b>개 제외.','🏷 Category filter for <b>{k}</b> (accepts: {a}) → keep <b>{n}</b>, skip <b>{d}</b> codes of other warehouses.'],
+ wc_clean:['Đồng thời xóa khỏi kho này {n} mã đang có nhưng thuộc kho khác (theo file)','파일 기준 다른 창고 품목 {n}개를 이 창고에서 삭제','Also remove {n} codes currently in this warehouse that belong to another one'],
+ wc_removed:['Đã dọn {n} mã sai kho.','다른 창고 품목 {n}개 정리.','Removed {n} codes of other warehouses.'], wc_log:['Dọn {n} mã sai kho','다른 창고 품목 {n}개 삭제','Removed {n} codes of other warehouses'],
+ wc_saved:['Đã lưu quy tắc phân loại kho – áp dụng cho lần upload tiếp theo.','창고 분류 규칙을 저장했습니다.','Warehouse rules saved – applied on the next upload.'],
+ l_wc:['Dọn {n} mã sai kho','다른 창고 품목 {n}개 삭제','Removed {n} codes'], l_wcs:['Sửa quy tắc phân loại kho','창고 분류 규칙 변경','Changed warehouse rules'],
  nd_btn:['Nhập ngày mới','새 날짜 입력','New date'], dd_btn:['Xóa số liệu ngày','이 날짜 삭제','Delete this date'],
  edit_btn:['Sửa tay','수기 수정','Manual edit'], edit_on:['Đang sửa tay','수기 수정 중','Editing'],
  edit_tip:['Bật để sửa tay cả số ERP, thông tin mã hàng và xóa dòng (ô tồn thực tế luôn nhập được). Mọi thay đổi đều ghi lịch sử.','켜면 ERP 수량·품목 정보 수정 및 행 삭제 가능 (실물 칸은 항상 입력 가능). 모든 변경은 이력에 기록됩니다.','Turn on to also edit ERP figures, item info and delete rows (physical cells are always editable). All changes are logged.'],
@@ -679,7 +726,7 @@ const D = {
  lock_off:['🔒 ERP &amp; danh mục: Khóa','🔒 ERP·품목 정보: 잠금','🔒 ERP &amp; master: Locked'],
  lock_on:['🔓 ERP &amp; danh mục: Đang mở','🔓 ERP·품목 정보: 해제','🔓 ERP &amp; master: Unlocked'],
  demo:['Dữ liệu mẫu','샘플 데이터','Demo data'], clear:['Xóa số liệu kho này','이 창고 수량 초기화','Clear this warehouse'], reset:['Khôi phục danh mục gốc','기본 품목 복원','Restore master list'],
- tab_mat:['Tồn Vật tư','자재 재고','Materials'], tab_tray:['TRAY/BOX','원자재','TRAY/BOX'], tab_inp:['Tồn INPUT','INPUT 재고','INPUT stock'], tab_out:['Tồn OUT','완제품 재고','Finished goods OUT'], tab_log:['Lịch sử chỉnh sửa','수정 이력','Edit history'],
+ tab_mat:['Tồn Vật tư','자재 재고','Materials'], tab_tray:['TRAY/BOX','원자재','TRAY/BOX'], tab_inp:['Tồn INPUT','INPUT 재고','INPUT stock'], tab_inpok:['Tồn kho OK','양품 재고','Good stock (OK)'], tab_inpng:['Tồn kho NG','불량 재고','Defect stock (NG)'], tab_out:['Tồn OUT','완제품 재고','Finished goods OUT'], tab_log:['Lịch sử chỉnh sửa','수정 이력','Edit history'],
  ch_model:['Theo Model · ERP vs Thực tế','모델별 ERP vs 실물','By model · ERP vs Physical'],
  ch_status:['Trạng thái đối chiếu','대사 결과','Reconciliation status'],
  ch_top:['Top 10 mã chênh lệch','차이 상위 10 품목','Top 10 variances'],
@@ -923,6 +970,28 @@ const SHEETS = {
     ],
     calc(r){ const I=n(r.g)+n(r.h); const T=['j','k','l','m','n','o','p'].reduce((a,k)=>a+n(r[k]),0); const act=T+n(r.s)-n(r.q); return {I,T,U:act-I,erp:I,act,diff:act-I}; }  // U = R + T − S − J
   },
+  inpok: {
+    key:'inpok', data:'inp', vn:'Tồn INPUT · OK', kr:'INPUT 양품 재고', loc:'AASI', xlName:'INPUT OK', start:5,
+    cols:[
+      {k:'no',t:'idx',x:'A'},{k:'model',t:'derived',x:'B',lbl:'Model'},{k:'code',t:'master',x:'C',lbl:'Mã hàng'},{k:'name',t:'master',x:'D',lbl:'Tên hàng'},
+      {k:'color',t:'master',x:'E',lbl:'Màu'},{k:'unit',t:'master',x:'F',lbl:'ĐVT'},{k:'loc',t:'master',x:'G',lbl:'Vị trí kho'},
+      {k:'g',t:'erp',x:'H',lbl:'ERP Hàng đạt'},{k:'I',t:'calc',x:'I',lbl:'ERP OK'},
+      {k:'j',t:'act',x:'J',lbl:'Tồn tại kho'},{k:'k',t:'act',x:'K',lbl:'Tồn line đợi gia công'},{k:'l',t:'act',x:'L',lbl:'Bán TP'},{k:'m',t:'act',x:'M',lbl:'Khác'},
+      {k:'T',t:'calc',x:'N',lbl:'Tổng OK'},{k:'q',t:'act',x:'O',lbl:'Phiếu nhập tạm'},{k:'s',t:'act',x:'P',lbl:'Chênh lệch DKSX'},
+      {k:'U',t:'diff',x:'Q',lbl:'Chênh lệch OK'},{k:'st',t:'status',x:'R',lbl:'Trạng thái'},{k:'note',t:'note',x:'S',lbl:'Ghi chú'},{k:'del',t:'del'}
+    ]
+  },
+  inpng: {
+    key:'inpng', data:'inp', vn:'Tồn INPUT · NG', kr:'INPUT 불량 재고', loc:'AASI', xlName:'INPUT NG', start:5,
+    cols:[
+      {k:'no',t:'idx',x:'A'},{k:'model',t:'derived',x:'B',lbl:'Model'},{k:'code',t:'master',x:'C',lbl:'Mã hàng'},{k:'name',t:'master',x:'D',lbl:'Tên hàng'},
+      {k:'color',t:'master',x:'E',lbl:'Màu'},{k:'unit',t:'master',x:'F',lbl:'ĐVT'},{k:'loc',t:'master',x:'G',lbl:'Vị trí kho'},
+      {k:'h',t:'erp',x:'H',lbl:'ERP Hàng lỗi'},{k:'I',t:'calc',x:'I',lbl:'ERP NG'},
+      {k:'n',t:'act',x:'J',lbl:'NG đã trả chờ đi phiếu'},{k:'o',t:'act',x:'K',lbl:'NG đầu vào'},{k:'p',t:'act',x:'L',lbl:'NG chờ xử lý'},
+      {k:'T',t:'calc',x:'M',lbl:'Tổng NG'},
+      {k:'U',t:'diff',x:'N',lbl:'Chênh lệch NG'},{k:'st',t:'status',x:'O',lbl:'Trạng thái'},{k:'note',t:'note',x:'P',lbl:'Ghi chú'},{k:'del',t:'del'}
+    ]
+  },
   out: {
     key:'out', vn:'Tồn OUT', kr:'완제품 재고', loc:'AASO', xlName:'Tồn OUT', start:7,
     cols:[
@@ -950,18 +1019,25 @@ const SHEETS = {
     calc(r){ const J=n(r.g)+n(r.h); const N=n(r.k)+n(r.l)+n(r.m); const Q=N+n(r.o)-n(r.p)-J; return {J,N,Q,erp:J,act:N+n(r.o)-n(r.p),diff:Q}; }
   }
 };
-const SKS=['mat','tray','inp','out'];
+const SKS=['mat','tray','inp','out'];                 // data sheets (stored)
+const VIEWS=['inpok','inpng'];                          // INPUT split into OK / NG views (same rows as 'inp')
+const ALLS=[...SKS,...VIEWS];
+const RS=['mat','tray','inpok','inpng','out'];          // what reports / summaries show
+const DK = sk => (typeof SHEETS!=='undefined'&&SHEETS[sk]&&SHEETS[sk].data)||sk;
+const DS = sk => S[DK(sk)];
 /* ---------- editable formulas: every ERP / physical column has a sign: +1 add, −1 subtract, 0 ignore ----------
    ERP total = Σ sign·ERP columns · Physical (adjusted) = Σ sign·physical columns · Variance = Physical − ERP */
 const DEF_SIGN={
   mat:{g:1,h:1,j:1,k:1,l:1,m:1,n:1,o:1,p:1,q:1,r:1,s:1},
   tray:{g:1,h:1,j:1,k:1,l:1,m:1,n:1,o:1,p:1,q:1,r:1,s:1},
   inp:{g:1,h:1,j:1,k:1,l:1,m:1,n:1,o:1,p:1,q:-1,s:1},
-  out:{g:1,h:1,k:1,l:1,m:1,o:1,p:-1}
+  out:{g:1,h:1,k:1,l:1,m:1,o:1,p:-1},
+  inpok:{g:1,j:1,k:1,l:1,m:1,q:-1,s:1},
+  inpng:{h:1,n:1,o:1,p:1}
 };
 function defSigns(sk){ const d=Object.assign({},DEF_SIGN[sk]); const L=(typeof S!=='undefined'&&S&&S.layout&&S.layout[sk])||{};
   (L.custom||[]).forEach(c=>{ if(c.type!=='text') d[c.k]=c.sign===undefined?1:c.sign; }); return d; }
-const SUBK={mat:null,tray:null,inp:['j','k','l','m','n','o','p'],out:['k','l','m']};   // keys of the in-table subtotal column
+const SUBK={mat:null,tray:null,inp:['j','k','l','m','n','o','p'],out:['k','l','m'],inpok:['j','k','l','m'],inpng:null};   // keys of the in-table subtotal column
 const FXC={};
 function signs(sk){ if(FXC[sk]) return FXC[sk]; const f=(typeof S!=='undefined'&&S&&S.formula&&S.formula[sk])||null; return FXC[sk]=Object.assign({},defSigns(sk),f&&f.signs||{}); }
 function fxCustom(sk){
@@ -1063,8 +1139,8 @@ const XF={
   sub:(sk,R)=>XF._e(sk,'sub',R) ?? xfTerms(sk,SUBK[sk]||SHEETS[sk].cols.filter(c=>c.t==='act').map(c=>c.k),R),
   diff:(sk,R)=>XF._e(sk,'diff',R) ?? `(${xfTerms(sk,SHEETS[sk].cols.filter(c=>c.t==='act').map(c=>c.k),R)})-${SHEETS[sk].cols.filter(c=>c.t==='calc')[0].x}${R}`
 };
-const GS={mat:['g','j'],tray:['g','j'],inp:['g','j'],out:['g','k']};
-SKS.forEach(sk=>{ SHEETS[sk].calc=r=>gcalc(sk,r); });
+const GS={mat:['g','j'],tray:['g','j'],inp:['g','j'],out:['g','k'],inpok:['g','j'],inpng:['h','n']};
+ALLS.forEach(sk=>{ SHEETS[sk].calc=r=>gcalc(sk,r); });
 const LEAD = sk => SHEETS[sk].cols.findIndex(c=>c.t==='erp');
 const VC = sk => SHEETS[sk].cols.filter(c=>!c.hidden);                 // visible columns
 const LEADV = sk => VC(sk).findIndex(c=>c.t==='erp'||c.t==='act'||c.t==='calc');
@@ -1089,7 +1165,7 @@ const HD={
        k:['act','kho','g-act',['Chờ kiểm tra OQC','OQC 검사 대기','Awaiting OQC']],l:['act','kho','g-act',['NG','불량','NG']],m:['act','kho','g-act',['Đã DKSX - nợ hàng','생산등록 - 미납','Registered - owed']],N:['act','kho','g-act',['TOTAL','합계','Total']],
        o:['act',0,'g-act2',['Phiếu tay chưa đi KD','수기전표 미출고','Manual slip not shipped']],p:['act',0,'g-act2',['Phiếu RMA chưa đi','RMA 미출고','RMA not shipped']]}
 };
-HD.tray=HD.mat;
+HD.tray=HD.mat; HD.inpok=HD.inp; HD.inpng=HD.inp;
 function leadLb(sk,k){ const LB={no:['STT','번호','No.'],model:['Model','모델','Model'],code:['Mã hàng','코드','Code'],name:['Tên hàng','품명','Item name'],color:['Màu','색상','Color'],unit:['ĐVT','단위','Unit'],
     loc: sk==='out'?['Mã kho','창고코드','WH code']:['Vị trí kho','보관 위치','Location'], U:['Chênh lệch','차이','Variance'], Q:['Chênh lệch','차이','Variance'], st:['Trạng thái','판정','Status'], note:['Ghi chú','비고','Remarks']};
   if(sk==='tray') Object.assign(LB,{model:['Nhóm hàng','품목그룹','Item group'],code:['Mã hàng','품목','Item'],name:['Tên hàng','품목명','Item name'],color:['Quy cách','색상 · 규격','Spec']});
@@ -1097,23 +1173,31 @@ function leadLb(sk,k){ const LB={no:['STT','번호','No.'],model:['Model','모�
 const NOHIDE=['idx','calc','diff','del'], NOHIDEK=['code','name'];
 let BASE=null;
 function composeCols(sk, L){
-  if(!BASE){ BASE={}; SKS.forEach(k=>BASE[k]=SHEETS[k].cols.map(c=>({...c}))); }
+  if(!BASE){ BASE={}; ALLS.forEach(k=>BASE[k]=SHEETS[k].cols.map(c=>({...c}))); }
   L=L||{};
-  const cols=BASE[sk].map(c=>{ const h=HD[sk][c.k]; const o={...c, lbl0:c.lbl, hd: h?{g1:h[0],g2:h[1]||null,cls:h[2],lb:h[3]}:{g1:null,g2:null,lb:leadLb(sk,c.k)}};
+  let cols=BASE[sk].map(c=>{ const h=HD[sk][c.k]; const o={...c, lbl0:c.lbl, hd: h?{g1:h[0],g2:h[1]||null,cls:h[2],lb:h[3]}:{g1:null,g2:null,lb:leadLb(sk,c.k)}};
     if(L.ren&&L.ren[c.k]) o.lbl=L.ren[c.k]; o.hidden=!!(L.hide&&L.hide[c.k]); delete o.gs; return o; });
   (L.custom||[]).forEach(cc=>{
     const o={k:cc.k,t:cc.type==='text'?'text':cc.type,x:cc.x,lbl:(L.ren&&L.ren[cc.k])||cc.lbl,lbl0:cc.lbl,custom:true,hidden:!!(L.hide&&L.hide[cc.k]),
       hd:{g1:cc.type==='text'?null:cc.type,g2:null,cls:cc.type==='erp'?'g-erp':'g-act',lb:null}};
+    const cg=cc.type==='act'&&L.cg&&L.cg[cc.k]; if(cg&&GRPDEF[cg]){ o.hd.g2=cg; o.hd.cls=GRPDEF[cg].cls; }
     const at = cc.type==='text' ? cols.findIndex(c=>c.t==='erp') : cc.type==='erp' ? cols.findIndex(c=>c.t==='calc') : (SUBK[sk] ? cols.findIndex(c=>c.t==='diff') : cols.findIndex((c,i)=>c.t==='calc'&&i>cols.findIndex(d=>d.t==='act')));
     cols.splice(at,0,o); });
+  if(L.order&&L.order.length) cols=lyApplyOrder(cols,L.order);
   ['erp','act'].forEach(g=>{ const f=cols.find(c=>!c.hidden&&c.hd.g1===g); if(f) f.gs=1; });
   return cols;
 }
+function lyApplyOrder(cols, order){            // saved order first; columns not in it stay after their default neighbour
+  const pos=new Map(order.map((k,i)=>[k,i]));
+  const out=cols.filter(c=>pos.has(c.k)).sort((a,b)=>pos.get(a.k)-pos.get(b.k));
+  cols.forEach((c,i)=>{ if(pos.has(c.k)) return; let p=i-1; while(p>=0&&!out.includes(cols[p])) p--; out.splice(p<0?0:out.indexOf(cols[p])+1,0,c); });
+  return out;
+}
 function applyLayout(sk){ SHEETS[sk].cols=composeCols(sk,(S.layout||{})[sk]); delete SHEETS[sk]._fx; }
-function applyLayouts(){ SKS.forEach(applyLayout); }
+function applyLayouts(){ ALLS.forEach(applyLayout); }
 for(const sk in GS) SHEETS[sk].cols.forEach(c=>{ if(GS[sk].includes(c.k)) c.gs=1; });
 const NUMK = sk => SHEETS[sk].cols.filter(c=>c.t==='erp'||c.t==='act').map(c=>c.k);
-const getModel = (sk,r) => (sk==='inp'||sk==='out') ? String(r.name||'').slice(0,8).replace(/[;\s]+$/,'') : (r.model||'');
+const getModel = (sk,r) => (DK(sk)==='inp'||sk==='out') ? String(r.name||'').slice(0,8).replace(/[;\s]+$/,'') : (r.model||'');
 
 /* ---------- state ---------- */
 const uid = () => 'r'+Math.random().toString(36).slice(2,10);
@@ -1135,7 +1219,7 @@ S.log = S.log || []; S.meta = S.meta || {};
 if(!Array.isArray(S.inp)){ S.inp = seedState().inp; }
 if(!Array.isArray(S.tray)){ S.tray = seedState().tray; }                    // migrate: new TRAY/BOX tab                       // migrate: new INPUT warehouse
 if(!S.ver){ const cm=new Map(SEED.o.map(a=>[String(a[0]).toUpperCase(),a[2]])); S.out.forEach(r=>{ if(r.color===undefined) r.color=cm.get(String(r.code).toUpperCase())||''; }); S.ver=2; }
-const UI = {trans:(()=>{try{return localStorage.getItem('kho_trans')==='1'}catch(e){return false}})(), tab:'mat', unlocked:false, f:{mat:{q:'',model:'',st:'',sort:''}, tray:{q:'',model:'',st:'',sort:''}, inp:{q:'',model:'',st:'',sort:''}, out:{q:'',model:'',st:'',sort:''}}};
+const UI = {trans:(()=>{try{return localStorage.getItem('kho_trans')==='1'}catch(e){return false}})(), tab:'mat', unlocked:false, f:{inpok:{q:'',model:'',st:'',sort:''}, inpng:{q:'',model:'',st:'',sort:''}, mat:{q:'',model:'',st:'',sort:''}, tray:{q:'',model:'',st:'',sort:''}, inp:{q:'',model:'',st:'',sort:''}, out:{q:'',model:'',st:'',sort:''}}};
 
 let saveT, LAST_SAVE=null;
 function save(){ Object.keys(FXC).forEach(k=>delete FXC[k]);
@@ -1254,7 +1338,7 @@ for(const sk in SHEETS){
 
 function filteredRows(sk){
   const f=UI.f[sk], q=f.q.trim().toLowerCase();
-  let rows=S[sk].map((r,i)=>({r,i,c:SHEETS[sk].calc(r)}));
+  let rows=DS(sk).map((r,i)=>({r,i,c:SHEETS[sk].calc(r)}));
   rows.forEach(o=>o.st=status(sk,o.r,o.c));
   if(q) rows=rows.filter(o=>[o.r.code,o.r.name,getModel(sk,o.r),o.r.note,o.r.loc,TR()?dispName(o.r):'',TR()?dispNote(o.r):''].join(' ').toLowerCase().includes(q));
   if(f.model) rows=rows.filter(o=>getModel(sk,o.r)===f.model);
@@ -1271,7 +1355,7 @@ function renderTable(){
   const rows=filteredRows(sk);
   $('#grid').innerHTML = colgroup(sk) + theadHTML(sk) + '<tbody>'+rows.map(o=>rowHTML(sk,o.r,o.i)).join('')+'</tbody><tfoot></tfoot>';
   renderFoot(rows); XL.a=XL.b=null; if($('#selInfo')) $('#selInfo').innerHTML='';
-  $('#tinfo').textContent = t('t_info',{a:rows.length,b:S[sk].length,s:shName(sk)});
+  $('#tinfo').textContent = t('t_info',{a:rows.length,b:DS(sk).length,s:shName(sk)});
 }
 function renderFoot(rows){
   const sk=UI.tab; rows = rows || filteredRows(sk);
@@ -1300,7 +1384,7 @@ function updateRowDOM(tr,sk,r){
 
 /* ---------- dashboard ---------- */
 function stats(sk, rows){
-  rows = rows || S[sk];
+  rows = rows || DS(sk);
   const o={n:rows.length, erp:0, act:0, diff:0, abs:0, cnt:{ok:0,over:0,short:0,none:0}, overQ:0, shortQ:0};
   rows.forEach(r=>{ const c=SHEETS[sk].calc(r), st=status(sk,r,c); o.cnt[st]++; if(st==='none') return;
     o.erp+=c.erp; o.act+=c.act; o.diff+=c.diff; o.abs+=Math.abs(c.diff); if(c.diff>0)o.overQ+=c.diff; else o.shortQ+=c.diff; });
@@ -1373,13 +1457,13 @@ function renderDash(){
   const sk=UI.tab; if(sk==='log') return;
   const o=stats(sk);
   $('#kpis').innerHTML=kpiHTML(sk,o);
-  $('#chModel').innerHTML=chartModel(sk,S[sk]);
+  $('#chModel').innerHTML=chartModel(sk,DS(sk));
   $('#chDonut').innerHTML=chartDonut(o);
-  $('#chTop').innerHTML=chartTop(sk,S[sk]);
+  $('#chTop').innerHTML=chartTop(sk,DS(sk));
 }
 function renderModels(){
   const sk=UI.tab; if(sk==='log') return;
-  const ms=[...new Set(S[sk].map(r=>getModel(sk,r)).filter(Boolean))].sort();
+  const ms=[...new Set(DS(sk).map(r=>getModel(sk,r)).filter(Boolean))].sort();
   const cur=UI.f[sk].model;
   $('#fModel').innerHTML=`<option value="">${t('all_model')}</option>`+ms.map(m=>`<option${m===cur?' selected':''}>${esc(m)}</option>`).join('');
 }
@@ -1394,7 +1478,7 @@ function counts(){ $('#c_mat').textContent=S.mat.length; $('#c_inp').textContent
 let refT;
 function refreshSoon(){ clearTimeout(refT); refT=setTimeout(()=>{ renderDash(); renderFoot(); },120); save(); }
 function renderUpTarget(){
-  const sk=UI.tab, name= sk==='log' ? '—' : shName(sk);
+  const sk=UI.tab, name= sk==='log' ? '—' : shName(DK(sk));
   $$('.upT').forEach(e=>e.textContent=name);
   ['#bUp','#bUp2'].forEach(id=>{ $(id).disabled= sk==='log'; $(id).style.opacity= sk==='log'?.5:1; $(id).title=sk==='log'?t('need_tab'):t('only_this',{s:name}); });
   $('#bClear').disabled= sk==='log'; $('#bClear').style.opacity= sk==='log'?.5:1;
@@ -1448,7 +1532,7 @@ function fxCheck(){
     catch(e){ $('#fxw_'+w).classList.add('bad'); if(!err) err=`${fxMeta(sk)[w==='erp'?'erpL':w==='sub'?'subL':'difL']}: ${e.message}`; } });
   $('#fxErr').textContent=err;
   if(err){ $('#fxSample').innerHTML=''; return null; }
-  const M=fxMeta(sk), rows=S[sk].filter(r=>hasData(sk,r)).slice(0,3); const use=rows.length?rows:S[sk].slice(0,1);
+  const M=fxMeta(sk), rows=DS(sk).filter(r=>hasData(sk,r)).slice(0,3); const use=rows.length?rows:DS(sk).slice(0,1);
   $('#fxSample').innerHTML=`<b>${t('fx_test')}</b><br>`+use.map(r=>{ const v={}; M.inputs.forEach(c=>v[c.x]=n(r[c.k]));
     const e=fxNum(C.erp.f(v,FXFN)); v[M.erpL]=e; const su=fxNum(C.sub.f(v,FXFN)); v[M.subL]=su; const d=fxNum(C.diff.f(v,FXFN));
     return `${esc(r.code)}: ${M.erpL}=${fmt(e)} · ${M.subL}=${fmt(su)} · ${M.difL}=<b>${fmtS(d)}</b>`; }).join('<br>');
@@ -1494,22 +1578,53 @@ function lyNextLetter(sk){ const all=[...BASE[sk].map(c=>c.x).filter(Boolean), .
   return xlCol(Math.max(...all.map(colIdx))); }
 function lyDraw(){
   const sk=UI.tab, cols=composeCols(sk,LYD), G=GRP(sk);
+  const SUBG=[...new Set(cols.filter(c=>!c.custom&&c.hd.g1==='act'&&c.hd.g2).map(c=>c.hd.g2))];
   const grpName=c=> c.t==='erp'||c.hd.g1==='erp'?'ERP': c.hd.g1==='act'?tri('Thực tế','실물','Physical'): c.t==='text'?tri('Thông tin','정보','Info'): tri('Thông tin mã','품목 정보','Item info');
   const rows=cols.filter(c=>c.t!=='del'&&c.t!=='idx').map(c=>{
     const def=c.custom?c.lbl0:(c.hd.lb?c.hd.lb[0]:c.lbl0), val=(LYD.ren&&LYD.ren[c.k])||(c.custom?c.lbl0:'');
     const canHide=!NOHIDE.includes(c.t)&&!NOHIDEK.includes(c.k);
-    return `<tr class="${c.hidden?'hid':''}${c.custom?' cus':''}"><td style="width:90px">${grpName(c)}</td><td style="width:40px">${c.x?`<span class="cl">${c.x}</span>`:''}</td>
+    const gsel = c.custom&&c.t==='act'&&SUBG.length ? `<select class="lysg" data-cg="${c.k}"><option value="">${tri('Thực tế','실물','Physical')}</option>${SUBG.map(g=>`<option value="${g}" ${c.hd.g2===g?'selected':''}>› ${esc(G[g].lb[0])}</option>`).join('')}</select>` : grpName(c)+(c.hd.g2?`<small class="lysub">› ${esc(G[c.hd.g2].lb[0])}</small>`:'');
+    return `<tr class="${c.hidden?'hid':''}${c.custom?' cus':''}"><td class="lymv"><button data-mv="${c.k}" data-d="-1" title="${tri('Chuyển sang trái','왼쪽으로','Move left')}">▲</button><button data-mv="${c.k}" data-d="1" title="${tri('Chuyển sang phải','오른쪽으로','Move right')}">▼</button></td><td style="width:130px">${gsel}</td><td style="width:40px">${c.x?`<span class="cl">${c.x}</span>`:''}</td>
       <td><input type="text" data-ren="${c.k}" value="${esc(val)}" placeholder="${esc(def)}"></td>
       <td style="width:90px;text-align:center"><label class="chk" style="justify-content:center"><input type="checkbox" data-show="${c.k}" ${c.hidden?'':'checked'} ${canHide?'':'disabled'}> ${t('ly_show')}</label></td>
       <td style="width:80px;text-align:center">${c.custom?`<button class="xdel" data-del="${c.k}">${t('ly_del')}</button>`:''}</td></tr>`; }).join('');
-  $('#lyTbl').innerHTML=`<table><thead><tr><th>${t('fx_grp')}</th><th>${tri('Cột','열','Col')}</th><th>${t('ly_name')}</th><th>${t('ly_show')}</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+  $('#lyTbl').innerHTML=`<table><thead><tr><th style="width:62px">${tri('Vị trí','순서','Order')}</th><th>${t('fx_grp')}</th><th>${tri('Cột','열','Col')}</th><th>${t('ly_name')}</th><th>${t('ly_show')}</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
   const used=new Set(cols.flatMap(c=>[c.hd.g1,c.hd.g2]).filter(Boolean));
   $('#lyGroups').innerHTML=[...used].map(g=>`<label>${esc(G[g].lb[0])}<input type="text" data-gren="${g}" value="${esc((LYD.gren||{})[g]||'')}" placeholder="${esc(G[g].lb[0])}"></label>`).join('');
   $$('#lyTbl [data-ren]').forEach(i=>i.oninput=()=>{ LYD.ren=LYD.ren||{}; const v=i.value.trim(); const cu=(LYD.custom||[]).find(c=>c.k===i.dataset.ren);
     if(cu){ if(v) cu.lbl=v; } else if(v) LYD.ren[i.dataset.ren]=v; else delete LYD.ren[i.dataset.ren]; });
   $$('#lyTbl [data-show]').forEach(i=>i.onchange=()=>{ LYD.hide=LYD.hide||{}; if(i.checked) delete LYD.hide[i.dataset.show]; else LYD.hide[i.dataset.show]=true; i.closest('tr').classList.toggle('hid',!i.checked); });
-  $$('#lyTbl [data-del]').forEach(b=>b.onclick=()=>{ const k=b.dataset.del; if(!confirm(t('ly_del_confirm'))) return; LYD.custom=LYD.custom.filter(c=>c.k!==k); if(LYD.hide) delete LYD.hide[k]; if(LYD.ren) delete LYD.ren[k]; lyDraw(); });
+  $$('#lyTbl [data-del]').forEach(b=>b.onclick=()=>{ const k=b.dataset.del; if(!confirm(t('ly_del_confirm'))) return; LYD.custom=LYD.custom.filter(c=>c.k!==k); if(LYD.cg) delete LYD.cg[k]; if(LYD.order) LYD.order=LYD.order.filter(x=>x!==k); if(LYD.hide) delete LYD.hide[k]; if(LYD.ren) delete LYD.ren[k]; lyDraw(); });
+  $$('#lyTbl [data-mv]').forEach(b=>b.onclick=()=>lyMove(b.dataset.mv,+b.dataset.d));
+  $$('#lyTbl [data-cg]').forEach(sl=>sl.onchange=()=>lySetGroup(sl.dataset.cg,sl.value));
   $$('#lyGroups [data-gren]').forEach(i=>i.oninput=()=>{ LYD.gren=LYD.gren||{}; const v=i.value.trim(); if(v) LYD.gren[i.dataset.gren]=v; else delete LYD.gren[i.dataset.gren]; });
+}
+/* move a column one step left/right, inside its own zone: info columns ↔ info, ERP ↔ ERP, physical ↔ physical, variance/status/note ↔ each other.
+   A column of a sub-group (Tồn OK, Tồn NG…) moves inside that sub-group; other columns jump over a whole sub-group block. */
+function lyMove(k,dir){
+  const sk=UI.tab, cols=composeCols(sk,LYD), keys=cols.map(c=>c.k), i=keys.indexOf(k), c=cols[i]; if(i<0) return;
+  const fg=cols.findIndex(x=>x.hd.g1);
+  const zone=x=>{ const ix=cols.indexOf(x); return x.hd.g1 ? x.hd.g1 : (x.t==='idx'||x.t==='del') ? 'fix'+ix : ix<fg ? 'lead' : 'tail'; };
+  const same=(a,b)=>a.hd.g1===b.hd.g1&&a.hd.g2&&a.hd.g2===b.hd.g2;
+  const j=i+dir, d=cols[j];
+  const stop=()=>toast(tri('Không thể chuyển tiếp – cột chỉ đổi chỗ trong cùng nhóm đề mục.','같은 그룹 안에서만 이동할 수 있습니다.','Columns move only within their heading group.'),'err');
+  if(!d||zone(d)!==zone(c)) return stop();
+  if(c.hd.g2){ if(!same(c,d)) return stop(); [keys[i],keys[j]]=[keys[j],keys[i]]; }
+  else if(d.hd.g2){ let a=j,b=j; while(a-1>=0&&same(cols[a-1],d)) a--; while(b+1<cols.length&&same(cols[b+1],d)) b++;
+    keys.splice(i,1); keys.splice(dir<0?a:b,0,k); }
+  else [keys[i],keys[j]]=[keys[j],keys[i]];
+  LYD.order=keys; lyDraw();
+  const tr=$(`#lyTbl [data-mv="${k}"]`); if(tr) tr.closest('tr').classList.add('lyflash');
+}
+function lySetGroup(k,g){
+  const sk=UI.tab, old=(LYD.cg||{})[k]; LYD.cg=LYD.cg||{};
+  const cols=composeCols(sk,LYD), keys=cols.map(c=>c.k).filter(x=>x!==k);
+  const lastOf=gg=>{ let p=-1; cols.forEach(c=>{ if(c.k!==k&&c.hd.g1==='act'&&c.hd.g2===gg) p=keys.indexOf(c.k); }); return p; };
+  let p = g ? lastOf(g) : (old ? lastOf(old) : -1);
+  if(p<0) p=cols.findIndex(c=>c.k===k)-1;
+  keys.splice(p+1,0,k);
+  if(g) LYD.cg[k]=g; else delete LYD.cg[k];
+  LYD.order=keys; lyDraw();
 }
 function openLay(){ const sk=UI.tab; LYD=JSON.parse(JSON.stringify((S.layout||{})[sk]||{ren:{},gren:{},hide:{},custom:[]})); LYD.custom=LYD.custom||[];
   $('#lyTitle').textContent=`🧩 ${t('ly_title')} — ${shName(sk)}`; $('#lyName').value=''; lyDraw(); $('#mLay').classList.add('on'); }
@@ -1518,11 +1633,12 @@ $('#lyClose').onclick=$('#lyCancel').onclick=()=>$('#mLay').classList.remove('on
 $$('#lySign button').forEach(b=>b.onclick=()=>{ LYSIGN=+b.dataset.v; $$('#lySign button').forEach(x=>x.classList.toggle('on',x===b)); });
 $('#lyType').onchange=()=>{ $('#lySign').style.visibility=$('#lyType').value==='text'?'hidden':'visible'; };
 $('#lyAddBtn').onclick=()=>{ const sk=UI.tab, nm=$('#lyName').value.trim(); if(!nm){ toast(t('ly_need_name'),'err'); $('#lyName').focus(); return; }
-  const ks=(LYD.custom||[]).map(c=>+c.k.slice(1)); const k='c'+(Math.max(0,...ks)+1);
+  const ks=(LYD.custom||[]).map(c=>+(c.k.match(/(\d+)$/)||[0,0])[1]); const k=(SHEETS[sk].data?sk+'_':'')+'c'+(Math.max(0,...ks)+1);
   LYD.custom.push({k,lbl:nm,type:$('#lyType').value,x:lyNextLetter(sk),sign:LYSIGN}); $('#lyName').value=''; lyDraw(); toast(t('ly_added',{n:nm})); };
 $('#lyReset').onclick=()=>{ if(!confirm(t('ly_reset_confirm'))) return; LYD={ren:{},gren:{},hide:{},custom:[]}; lyDraw(); };
 $('#lySave').onclick=()=>{ const sk=UI.tab; S.layout=S.layout||{};
-  const clean={ren:LYD.ren||{},gren:LYD.gren||{},hide:LYD.hide||{},custom:LYD.custom||[]};
+  const clean={ren:LYD.ren||{},gren:LYD.gren||{},hide:LYD.hide||{},custom:LYD.custom||[],order:LYD.order||[],cg:LYD.cg||{}};
+  Object.keys(clean.cg).forEach(k=>{ if(!clean.custom.some(x=>x.k===k)) delete clean.cg[k]; });
   const desc=`${clean.custom.length} ${tri('cột bổ sung','추가 열','custom cols')}, ${Object.keys(clean.ren).length} ${tri('tên sửa','이름 변경','renamed')}, ${Object.keys(clean.hide).length} ${tri('cột ẩn','숨김','hidden')}`;
   S.layout[sk]=clean; addLog(sk,'—',t('ly_title'),'',desc,'l_ly',{d:desc});
   $('#mLay').classList.remove('on'); UI.f[sk]=UI.f[sk]||{q:'',model:'',st:'',sort:''}; save(); renderAll(); toast(t('ly_saved'),'ok'); };
@@ -1542,7 +1658,7 @@ function switchDay(d){
   S.days=S.days||{};
   S.days[S.meta.date]={mat:S.mat,tray:S.tray,inp:S.inp,out:S.out};
   const x=S.days[d]; delete S.days[d];
-  SKS.forEach(sk=>S[sk]=x[sk]||[]); S.meta.date=d; UNDO.length=0;
+  SKS.forEach(sk=>S[DK(sk)]=x[sk]||[]); S.meta.date=d; UNDO.length=0;
   save(); renderAll(); toast(t('nd_switched',{d:fmtDate(d)}));
 }
 $('#m_day').onchange=e=>switchDay(e.target.value);
@@ -1555,26 +1671,38 @@ $('#ndOk').onclick=()=>{
   const cErp=$('#ndErp').checked, cAct=$('#ndAct').checked, cNote=$('#ndNote').checked;
   const fresh={};
   SKS.forEach(sk=>{ const cols=SHEETS[sk].cols;
-    fresh[sk]=S[sk].map(r=>{ const o={id:uid()}; cols.forEach(c=>{ const k=c.k;
+    fresh[sk]=DS(sk).map(r=>{ const o={id:uid()}; cols.forEach(c=>{ const k=c.k;
       if(c.t==='master') o[k]=r[k];
       else if(c.t==='erp'&&cErp) o[k]=r[k]??null;
       else if(c.t==='act'&&cAct) o[k]=r[k]??null;
       else if((c.t==='note'||c.t==='text')&&cNote) o[k]=r[k]||''; }); if(!o.unit) o.unit='EA'; return o; }); });
   S.days=S.days||{}; S.days[S.meta.date]={mat:S.mat,tray:S.tray,inp:S.inp,out:S.out};
-  SKS.forEach(sk=>S[sk]=fresh[sk]); const from=S.meta.date; S.meta.date=d; UNDO.length=0;
+  SKS.forEach(sk=>S[DK(sk)]=fresh[sk]); const from=S.meta.date; S.meta.date=d; UNDO.length=0;
   addLog(UI.tab==='log'?'mat':UI.tab,'—',t('nd_btn'),fmtDate(from),fmtDate(d),'l_nd',{d:fmtDate(d)});
   save(); renderAll(); toast(t('nd_created',{d:fmtDate(d)}),'ok');
 };
 $('#bDelDay').onclick=()=>{
   const d=S.meta.date, others=Object.keys(S.days||{}).sort().reverse();
   if(!confirm(t('dd_confirm',{d:fmtDate(d),n:dayCount(d)}))) return;
-  if(others.length){ const nxt=others[0], x=S.days[nxt]; delete S.days[nxt]; SKS.forEach(sk=>S[sk]=x[sk]||[]); S.meta.date=nxt; }
-  else { SKS.forEach(sk=>S[sk].forEach(r=>{ NUMK(sk).forEach(k=>r[k]=null); r.note=''; SHEETS[sk].cols.filter(c=>c.t==='text').forEach(c=>r[c.k]=''); r.ed={}; })); }
+  if(others.length){ const nxt=others[0], x=S.days[nxt]; delete S.days[nxt]; SKS.forEach(sk=>S[DK(sk)]=x[sk]||[]); S.meta.date=nxt; }
+  else { SKS.forEach(sk=>DS(sk).forEach(r=>{ NUMK(sk).forEach(k=>r[k]=null); r.note=''; SHEETS[sk].cols.filter(c=>c.t==='text').forEach(c=>r[c.k]=''); r.ed={}; })); }
   UNDO.length=0; addLog('mat','—',t('dd_btn'),fmtDate(d),'','l_dd',{d:fmtDate(d)});
   save(); renderAll(); toast(others.length?t('dd_done_sw',{d:fmtDate(d),x:fmtDate(S.meta.date)}):t('dd_done_clear',{d:fmtDate(d)}),'ok');
 };
+let WCD=null;
+function wcDraw(){
+  $('#wcTbl').innerHTML=`<table><thead><tr><th>${tri('Kho','창고','Warehouse')}</th>${CATS.map(c=>`<th>${esc(CAT_LB[c][0])}<br><small style="opacity:.75">${esc(CAT_LB[c][1])}</small></th>`).join('')}</tr></thead><tbody>`+
+    SKS.map(sk=>`<tr><td><b>${esc(shName(sk))}</b></td>${CATS.map(c=>`<td><input type="checkbox" data-sk="${sk}" data-c="${c}" ${(WCD[sk]||[]).includes(c)?'checked':''}></td>`).join('')}</tr>`).join('')+'</tbody></table>';
+  $('#wcKw').value=WCD.kw; $('#wcUnk').value=WCD.unk||'allow';
+  $$('#wcTbl input').forEach(i=>i.onchange=()=>{ const a=new Set(WCD[i.dataset.sk]||[]); i.checked?a.add(i.dataset.c):a.delete(i.dataset.c); WCD[i.dataset.sk]=CATS.filter(c=>a.has(c)); });
+}
+$('#bWc').onclick=()=>{ WCD=JSON.parse(JSON.stringify(whc())); wcDraw(); $('#mWc').classList.add('on'); };
+$('#wcClose').onclick=$('#wcCancel').onclick=()=>$('#mWc').classList.remove('on');
+$('#wcReset').onclick=()=>{ WCD=JSON.parse(JSON.stringify(WHC_DEF)); wcDraw(); };
+$('#wcSave').onclick=()=>{ WCD.kw=$('#wcKw').value; WCD.unk=$('#wcUnk').value; S.whcat=WCD; addLog('mat','—',t('wc_title'),'',SKS.map(k=>k+':'+(WCD[k]||[]).join('+')).join(' | '),'l_wcs',{});
+  $('#mWc').classList.remove('on'); save(); toast(t('wc_saved'),'ok'); };
 function renderAll(){
-  applyLayouts(); renderDays(); Object.keys(FXC).forEach(k=>delete FXC[k]);
+  applyLayouts(); renderDays(); renderSubTabs(); Object.keys(FXC).forEach(k=>delete FXC[k]);
   counts(); renderUpTarget(); renderFxBar();
   const isLog=UI.tab==='log';
   $('#dash').classList.toggle('hide',isLog); $('#tableCard').classList.toggle('hide',isLog); $('#logCard').classList.toggle('hide',!isLog);
@@ -1585,7 +1713,7 @@ function renderAll(){
 
 /* ---------- editing ---------- */
 const grid=$('#grid');
-const findRow=(sk,id)=>S[sk].find(r=>r.id===id);
+const findRow=(sk,id)=>DS(sk).find(r=>r.id===id);
 /* ---------- Excel-like: arrows, range selection, copy / cut / paste, delete, undo ---------- */
 const XL={a:null,b:null,drag:false,mute:false};
 const UNDO=[];
@@ -1754,15 +1882,18 @@ function undo(){
 }
 grid.addEventListener('click',e=>{
   const b=e.target.closest('[data-act="del"]'); if(!b) return;
-  const sk=UI.tab, tr=b.closest('tr'), idx=S[sk].findIndex(r=>r.id===tr.dataset.id); if(idx<0) return;
-  const r=S[sk][idx];
+  const sk=UI.tab, tr=b.closest('tr'), idx=DS(sk).findIndex(r=>r.id===tr.dataset.id); if(idx<0) return;
+  const r=DS(sk)[idx];
   if(!r.isNew && !UI.unlocked){ toast(t('need_unlock'),'err'); return; }
   if(!confirm(t('del_confirm',{c:r.code||'—',s:shName(sk)}))) return;
-  S[sk].splice(idx,1); addLog(sk,r.code,'Xóa dòng','','','l_del'); save(); renderAll();
+  DS(sk).splice(idx,1); addLog(sk,r.code,'Xóa dòng','','','l_del'); save(); renderAll();
 });
 
 /* ---------- toolbar ---------- */
-$$('.tab').forEach(t=>t.onclick=()=>{ $$('.tab').forEach(x=>x.classList.toggle('on',x===t)); UI.tab=t.dataset.tab; renderAll(); });
+$$('.tab').forEach(t=>t.onclick=()=>{ $$('.tab').forEach(x=>x.classList.toggle('on',x===t)); UI.tab= t.dataset.tab==='inp' ? (UI.inpView||'inpok') : t.dataset.tab; renderAll(); });
+$$('#subTabs button').forEach(b=>b.onclick=()=>{ UI.inpView=b.dataset.v; UI.tab=b.dataset.v; renderAll(); });
+function renderSubTabs(){ const on=VIEWS.includes(UI.tab); $('#subTabs').classList.toggle('hide',!on);
+  $$('#subTabs button').forEach(b=>{ b.classList.toggle('on',b.dataset.v===UI.tab); const st=stats(b.dataset.v); b.querySelector('.cnt').textContent=st.cnt.over+st.cnt.short; }); }
 let qT; $('#q').oninput=e=>{ clearTimeout(qT); qT=setTimeout(()=>{ UI.f[UI.tab].q=e.target.value; renderTable(); },150); };
 $('#fModel').onchange=e=>{ UI.f[UI.tab].model=e.target.value; renderTable(); };
 $('#fSt').onchange=e=>{ UI.f[UI.tab].st=e.target.value; renderTable(); };
@@ -1777,13 +1908,13 @@ $('#bAdd').onclick=()=>{
   const sk=UI.tab==='log'?'mat':UI.tab;
   if(UI.tab==='log'){ $$('.tab')[0].click(); }
   const r={id:uid(),isNew:true,model:'',code:'',name:'',unit:'EA',loc:SHEETS[sk].loc};
-  S[sk].push(r); UI.f[sk]={q:'',model:'',st:'',sort:''}; addLog(sk,t('newcode'),'Thêm dòng','','','l_add'); save(); renderAll();
+  DS(sk).push(r); UI.f[sk]={q:'',model:'',st:'',sort:''}; addLog(sk,t('newcode'),'Thêm dòng','','','l_add'); save(); renderAll();
   const tr=$(`tr[data-id="${r.id}"]`); if(tr){ tr.scrollIntoView({block:'center'}); $('input[data-k="code"]',tr).focus(); }
 };
 $('#bClear').onclick=()=>{
-  const sk=UI.tab; if(sk==='log'){ toast(t('need_tab'),'err'); return; }
+  const sk=DK(UI.tab); if(sk==='log'){ toast(t('need_tab'),'err'); return; }
   if(!confirm(t('clear_confirm',{s:shName(sk)}))) return;
-  S[sk].forEach(r=>{ NUMK(sk).forEach(k=>r[k]=null); r.note=''; r.ed={}; });
+  DS(sk).forEach(r=>{ NUMK(sk).forEach(k=>r[k]=null); r.note=''; r.ed={}; });
   addLog(sk,'—','Xóa số liệu','','','l_clear'); save(); renderAll(); toast(t('cleared'),'ok');
 };
 $('#bReset').onclick=()=>{
@@ -1901,6 +2032,10 @@ function mapSheet(A, sk){
     if(map.h===undefined){ const c=A.hdr.findIndex((x,i)=>!used.has(i)&&x&&!money(x)&&NGQ.test(x)); if(c>=0){ map.h=c; used.add(c); } }
   }
   const erpOnly=!actMapped && (map.g!==undefined||map.h!==undefined);
+  // item account / category column (품목계정 > 품목구분 > phân loại …) – used to keep only codes of this warehouse
+  let acc=A.hdr.findIndex((x,i)=>!used.has(i)&&x&&/품목 ?계정|item ?account|tai khoan hang|loai tai khoan/.test(x));
+  if(acc<0) acc=A.hdr.findIndex((x,i)=>!used.has(i)&&x&&/품목 ?구분|phan loai|loai hang|item ?type|category/.test(x));
+  if(acc>=0) map.acc=acc;
   const num=want.filter(k=>['erp','act'].includes(SH.cols.find(c=>c.k===k).t));
   const hit=num.filter(k=>map[k]!==undefined).length;
   const score=hit*2+want.filter(k=>map[k]!==undefined).length-hit+(SHEET_HINT[sk].test(nz(A.nm))?6:0)+(map.color!==undefined&&sk!=='mat'?1:0)+((sk==='tray'||sk==='mat')&&map.model!==undefined&&/품목 ?그룹|nhom hang|item group/.test(A.hdr[map.model]||'')?(sk==='tray'?2:-2):0);
@@ -1912,6 +2047,7 @@ function extractRows(A, M){
     const a=A.aoa[r]||[]; const code=String(a[A.codeC]??'').trim();
     if(!code||code.length>40||/^(tong|합계|total|tong cong|ngay kiem ke)/.test(nz(code))) continue;
     const o={code};
+    if(M.map.acc!==undefined) o.acc=String(a[M.map.acc]??'').trim();
     M.want.forEach(k=>{ if(k==='code'||M.map[k]===undefined) return; const col=SH.cols.find(c=>c.k===k), v=a[M.map[k]];
       o[k] = (col.t==='erp'||col.t==='act') ? toNum(v) : String(v??'').trim(); });
     rows.push(o);
@@ -1924,13 +2060,39 @@ function extractRows(A, M){
   return [...agg.values()];
 }
 const xlCol = c => { let s=''; c++; while(c>0){ const m=(c-1)%26; s=String.fromCharCode(65+m)+s; c=Math.floor((c-1)/26); } return s; };
+/* ---------- warehouse ↔ ERP item account rules ---------- */
+const CATS=['prod','semi','semis','sub','raw'];
+const CAT_LB={prod:['Thành phẩm','제품','Product'], semi:['Bán thành phẩm (thường)','반제품','Semi assembly'], semis:['Bán TP – phím & linh kiện nhỏ','반제품 (키·소형 부품)','Semi – keys & small parts'],
+  sub:['Vật tư phụ','부자재','Sub material'], raw:['Nguyên vật liệu','원자재','Raw material']};
+const WHC_DEF={mat:['sub','semis'], tray:['raw'], inp:['semi'], out:['prod'], kw:'KEY, BUTTON, PHIM, PHÍM', unk:'allow'};
+function whc(){ return Object.assign({},WHC_DEF,S.whcat||{}); }
+function smallPart(name){ const kws=whc().kw.split(/[,;\n]/).map(x=>nz(x)).filter(Boolean); const nm=' '+nz(name)+' ';
+  return kws.some(k=>new RegExp('(^|[^a-z0-9])'+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'([^a-z0-9]|$)').test(nm)); }
+function classify(acc, name){
+  const x=nz(acc); if(!x) return null;
+  if(/semi|반제품|ban thanh pham/.test(x)) return smallPart(name)?'semis':'semi';
+  if(/sub ?mat|부자재|vat tu phu/.test(x)) return 'sub';
+  if(/raw ?mat|원자재|nguyen vat lieu|nguyen lieu/.test(x)) return 'raw';
+  if(/product|제품|thanh pham|finished/.test(x)) return 'prod';
+  return null;
+}
+/* split upload rows into: kept for this warehouse / belonging to another warehouse */
+function whFilter(sk, rows){
+  const rule=whc(), ok=new Set(rule[sk]||[]), nameOf=r=>r.name||(DS(sk).find(x=>String(x.code).toUpperCase()===r.code.toUpperCase())||{}).name||'';
+  const keep=[], drop=[];
+  rows.forEach(r=>{ if(r.acc===undefined){ keep.push(r); return; } const c=classify(r.acc,nameOf(r)); r.cat=c;
+    if(c? ok.has(c) : rule.unk!=='skip') keep.push(r); else drop.push(r); });
+  const dropKeys=new Set(drop.map(r=>r.code.toUpperCase()));
+  const clean=DS(sk).filter(r=>dropKeys.has(String(r.code).toUpperCase()));
+  return {keep, drop, clean, has:rows.some(r=>r.acc!==undefined)};
+}
 function showMapModal(fname, A, M, rows){
   const sk=M.sk, SH=SHEETS[sk];
   const key=r=>String(r.code).trim().toUpperCase();
-  const have=new Map(); S[sk].forEach(r=>have.set(key(r),(have.get(key(r))||0)+1));
+  const have=new Map(); DS(sk).forEach(r=>have.set(key(r),(have.get(key(r))||0)+1));
   const seen=new Map(); let hit=0, neu=0;
   rows.forEach(r=>{ const k=key(r), i=(seen.get(k)||0); seen.set(k,i+1); if(i<(have.get(k)||0)) hit++; else neu++; });
-  const fileKeys=new Set(rows.map(key)); const missing=S[sk].filter(r=>!fileKeys.has(key(r))).length;
+  const fileKeys=new Set(rows.map(key)); const missing=DS(sk).filter(r=>!fileKeys.has(key(r))).length;
   $('#mpInfo').innerHTML=t('map_info',{f:esc(fname),s:esc(A.nm),n:rows.length,k:esc(shName(sk)),h:hit,m:neu,x:missing});
   const show=M.erpOnly ? M.want.filter(k=>{ const t_=SH.cols.find(c=>c.k===k).t; return t_==='erp'||(t_==='master'&&M.map[k]!==undefined); }) : M.want;
   const lines=show.map(k=>{ const col=SH.cols.find(c=>c.k===k), c=M.map[k], ok=c!==undefined;
@@ -1938,12 +2100,20 @@ function showMapModal(fname, A, M, rows){
     return `<tr class="${ok?'':'miss'}"><td>${ok?'✓':'–'}</td><td><b>${esc(col.lbl)}</b>${grp?` <span class="g">${grp}</span>`:''}</td><td>${ok?`<span class="cl">${xlCol(c)}</span> ${esc(A.raw[c]||'')}`:`<i>${t('map_none')}</i>`}</td></tr>`; }).join('');
   $('#mpTbl').innerHTML=`<table><thead><tr><th></th><th>${t('map_field')}</th><th>${t('map_col')}</th></tr></thead><tbody>${lines}</tbody></table>`;
   $('#mpAdd').checked=!M.erpOnly;
+  const F=M._f;
+  if(F&&F.has){ const sum=c=>F.drop.filter(r=>r.cat===c).length, rule=whc()[sk]||[];
+    const ex=F.drop.slice(0,4).map(r=>esc(r.code)).join(', ');
+    $('#mpCat').innerHTML=t('wc_info',{k:esc(shName(sk)),a:rule.map(c=>tri(...CAT_LB[c])).join(' + ')||'—',n:F.keep.length,d:F.drop.length})
+      +(F.drop.length?`<br><span style="opacity:.85">${CATS.filter(sum).map(c=>`${tri(...CAT_LB[c])}: ${sum(c)}`).join(' · ')}${ex?' – VD: '+ex:''}</span>`:'');
+    $('#mpCat').style.display=''; $('#mpCleanWrap').style.display=F.clean.length?'':'none'; $('#mpClean').checked=F.clean.length>0;
+    $('#mpCleanTxt').textContent=t('wc_clean',{n:F.clean.length}); }
+  else { $('#mpCat').style.display='none'; $('#mpCleanWrap').style.display='none'; $('#mpClean').checked=false; }
   $('#mpReplace').style.display=M.erpOnly?'none':'';
   $('#mpErp').style.display=M.erpOnly?'':'none';
   $('#mMap').classList.add('on');
   return new Promise(res=>{
     const done=v=>{ $('#mMap').classList.remove('on'); ['#mpMerge','#mpReplace','#mpCancel','#mpClose'].forEach(id=>$(id).onclick=null); res(v); };
-    $('#mpMerge').onclick=()=>done({mode:'merge',add:$('#mpAdd').checked});
+    $('#mpMerge').onclick=()=>done({mode:'merge',add:$('#mpAdd').checked,clean:$('#mpClean').checked});
     $('#mpReplace').onclick=()=>done({mode:'replace'});
     $('#mpCancel').onclick=$('#mpClose').onclick=()=>done(null);
   });
@@ -1951,19 +2121,22 @@ function showMapModal(fname, A, M, rows){
 function applyMapped(sk, rows, M, choice, fname, sheetName){
   const SH=SHEETS[sk], key=r=>String(r.code).trim().toUpperCase();
   const fill=(dst,src)=>{ M.want.forEach(k=>{ if(k==='code'||M.map[k]===undefined) return; const col=SH.cols.find(c=>c.k===k);
-      if(col.t==='master'){ if(src[k] && (!M.erpOnly || !dst[k])) dst[k]=src[k]; } else dst[k]=src[k]; }); };
+      if(col.t==='master'){ if(src[k] && (!M.erpOnly || !dst[k])) dst[k]=src[k]; } else dst[k]=src[k]; }); if(src.cat) dst.cat=src.cat; };
   if(choice.mode==='replace'){
-    S[sk]=rows.map(src=>{ const r={id:uid(),code:src.code,unit:'EA',loc:SH.loc}; fill(r,src); if(!r.unit) r.unit='EA'; if(!r.loc) r.loc=SH.loc; return r; });
+    S[DK(sk)]=rows.map(src=>{ const r={id:uid(),code:src.code,unit:'EA',loc:SH.loc}; fill(r,src); if(!r.unit) r.unit='EA'; if(!r.loc) r.loc=SH.loc; return r; });
     addLog(sk,'—',`Upload "${fname}"`,'','','l_rep',{f:fname,s:sheetName,n:rows.length});
     return t('map_rep_done',{s:shName(sk),n:rows.length});
   }
-  const idx=new Map(); S[sk].forEach(r=>{ const k=key(r); if(!idx.has(k)) idx.set(k,[]); idx.get(k).push(r); });
+  const idx=new Map(); DS(sk).forEach(r=>{ const k=key(r); if(!idx.has(k)) idx.set(k,[]); idx.get(k).push(r); });
   const seen=new Map(); let u=0,a=0;
   rows.forEach(src=>{ const k=key(src), i=M.erpOnly?0:(seen.get(k)||0); seen.set(k,i+1); const dst=(idx.get(k)||[])[i];
     if(dst){ fill(dst,src); u++; }
-    else if(choice.add){ const r={id:uid(),code:src.code,unit:'EA',loc:SH.loc}; fill(r,src); S[sk].push(r); a++; } });
+    else if(choice.add){ const r={id:uid(),code:src.code,unit:'EA',loc:SH.loc}; fill(r,src); DS(sk).push(r); a++; } });
+  let rm=0;
+  if(choice.clean&&M._f&&M._f.clean.length){ const ids=new Set(M._f.clean.map(r=>r.id)); rm=DS(sk).filter(r=>ids.has(r.id)).length; S[DK(sk)]=DS(sk).filter(r=>!ids.has(r.id));
+    addLog(sk,'—',t('wc_log',{n:rm}),'',M._f.clean.map(r=>r.code).slice(0,30).join(', '),'l_wc',{n:rm}); }
   addLog(sk,'—',`Upload "${fname}"`,'','','l_map',{f:fname,s:sheetName,u,a});
-  return t('map_done',{u,a,s:shName(sk)});
+  return t('map_done',{u,a,s:shName(sk)})+(rm?' '+t('wc_removed',{n:rm}):'');
 }
 function detectERP(aoa){
   for(let i=0;i<Math.min(25,aoa.length);i++){
@@ -1983,7 +2156,7 @@ async function handleFile(file){ /* reads every sheet, maps columns by header me
   try{ XLSX=await libLoad('xlsx'); }catch(e){ busy(false); toast(e.message,'err'); return; }
   try{
     const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
-    const sk=UI.tab, cand=[], erp=[];
+    const sk=DK(UI.tab), cand=[], erp=[];
     wb.SheetNames.forEach(nm=>{
       const ws=wb.Sheets[nm], A=analyzeSheet(XLSX,ws,nm);
       if(A){ const ms=SKS.map(k=>mapSheet(A,k)).sort((a,b)=>b.score-a.score); const best=ms[0];
@@ -1995,10 +2168,10 @@ async function handleFile(file){ /* reads every sheet, maps columns by header me
     const pick=l=>l.sort((a,b)=>b.mine.score-a.mine.score)[0];
     const mine=pick(cand.filter(c=>!c.erp&&c.mine&&(c.mine.hit>=2||c.mine.map.name!==undefined)&&c.mine.score>=c.best.score)) || pick(cand.filter(c=>c.erp));
     if(mine){
-      const rows=extractRows(mine.A,mine.mine);
+      const all=extractRows(mine.A,mine.mine), F=whFilter(sk,all), rows=F.keep; mine.mine._f=F;
       const choice=await showMapModal(file.name,mine.A,mine.mine,rows); if(!choice) return;
       const msg=applyMapped(sk,rows,mine.mine,choice,file.name,mine.A.nm);
-      UI.f[sk]={q:'',model:'',st:'',sort:''}; save(); renderAll(); toast(msg,'ok');
+      UI.f[UI.tab]={q:'',model:'',st:'',sort:''}; save(); renderAll(); toast(msg,'ok');
       return;
     }
     if(erp.length){ mergeERP(erp,file.name,sk); return; }
@@ -2019,12 +2192,12 @@ function mergeERP(list,fname,sk){
     }
   });
   const idx=new Map();
-  S[sk].forEach(r=>{ const k=String(r.code).trim().toUpperCase(); if(!idx.has(k)) idx.set(k,r); });
+  DS(sk).forEach(r=>{ const k=String(r.code).trim().toUpperCase(); if(!idx.has(k)) idx.set(k,r); });
   let hit=0; const miss=[];
   agg.forEach((o,k)=>{ const r=idx.get(k); if(!r){ miss.push(o); return; } hit++; r.g=o.ok; if(o.hasNg) r.h=o.ng; });
   if(!confirm(t('only_this',{s:shName(sk)})+'\n\n'+t('erp_confirm',{f:fname,n:agg.size,h:hit,m:miss.length,x:miss.length?' ('+miss.slice(0,5).map(o=>o.code).join(', ')+')':''}))){ renderAll(); return; }
   if(miss.length && confirm(t('erp_add',{m:miss.length,s:shName(sk)}))){
-    miss.forEach(o=>{ S[sk].push({id:uid(),isNew:true,model:'',code:o.code,name:o.name,unit:o.unit||'EA',loc:o.loc||SHEETS[sk].loc,g:o.ok,h:o.hasNg?o.ng:null,i:sk==='out'&&o.hasRma?o.rma:null}); });
+    miss.forEach(o=>{ DS(sk).push({id:uid(),isNew:true,model:'',code:o.code,name:o.name,unit:o.unit||'EA',loc:o.loc||SHEETS[sk].loc,g:o.ok,h:o.hasNg?o.ng:null,i:sk==='out'&&o.hasRma?o.rma:null}); });
   }
   addLog(sk,'—',`ERP "${fname}"`,'','','l_erp',{f:fname,h:hit,m:miss.length});
   save(); renderAll(); toast(t('erp_done',{h:hit}),'ok');
@@ -2088,8 +2261,8 @@ function xlLayout(W, sk, hTop, hBot, R){
   const SH=SHEETS[sk], st=SH.start, s=XS;
   SH.cols.filter(c=>c.custom).forEach(c=>{ const x=c.x;
     W.box(`${x}${hTop}:${x}${hBot}`, `${c.lbl}\n(${c.t==='erp'?'ERP':c.t==='act'?'Thực tế':'Thông tin'} · bổ sung)`, c.t==='erp'?s.he:c.t==='act'?s.ha:s.hs);
-    S[sk].forEach((r,i)=>W.put(x+(st+i), c.t==='text'?(r[c.k]||''):(r[c.k]??''), c.t==='text'?s.txt:(c.t==='erp'?s.numE:s.numA)));
-    if(c.t!=='text') W.put(x+R, S[sk].reduce((a,r)=>a+n(r[c.k]),0), s.tot, `SUM(${x}${st}:${x}${R-1})`); else W.put(x+R,'',s.tot); });
+    DS(sk).forEach((r,i)=>W.put(x+(st+i), c.t==='text'?(r[c.k]||''):(r[c.k]??''), c.t==='text'?s.txt:(c.t==='erp'?s.numE:s.numA)));
+    if(c.t!=='text') W.put(x+R, DS(sk).reduce((a,r)=>a+n(r[c.k]),0), s.tot, `SUM(${x}${st}:${x}${R-1})`); else W.put(x+R,'',s.tot); });
   SH.cols.filter(c=>!c.custom&&c.lbl0&&c.lbl!==c.lbl0&&c.x).forEach(c=>{
     for(let r=hBot;r>=hTop;r--){ const cell=W.ws[c.x+r]; if(cell&&cell.v!==''&&cell.v!==null&&cell.v!==undefined){ cell.v=`${c.lbl}\n(${String(cell.v).split('\n')[0]})`; break; } } });
 }
@@ -2166,13 +2339,42 @@ function buildOutWS(XLSX){
   box(`A${R+2}:S${R+2}`,metaLine(),s.sub);
   return W.done([5,11,18,38,10,6,9,11,10,11,12,10,12,11,12,12,11,24,11].map(w=>({wch:w})),[{hpt:8},{hpt:30},{hpt:8},{hpt:24},{hpt:24},{hpt:34}]);
 }
+function buildViewWS(XLSX, sk){
+  const SH=SHEETS[sk], W=wsBuilder(XLSX), {put,box}=W, s=XS, rows=DS(sk), st=SH.start;
+  const cols=SH.cols.filter(c=>c.x&&c.t!=='del'), last=xlCol(Math.max(...cols.map(c=>colIdx(c.x)))-1), G=GRP(sk);
+  box(`A1:${last}1`,`BÁO CÁO ${SH.vn.toUpperCase()}  ·  ${SH.kr} (Thực tế vs ERP)`,s.title);
+  const sty=c=>{ const g=c.hd&&c.hd.g1; return g==='erp'?s.he: g==='act'?(c.hd.cls==='g-act2'?s.ha2:s.ha): c.t==='diff'?s.hdf: ['status','note','text'].includes(c.t)?s.hs: s.hm; };
+  const lab=c=>{ if(c.custom||c.lbl!==c.lbl0) return c.lbl; const lb=c.hd&&c.hd.lb; return c.t==='diff'?`차이\n${c.lbl}`: lb?`${lb[1]}\n${lb[0]}`:c.lbl; };
+  cols.forEach(c=>{ const g=c.hd&&c.hd.g1; if(g) box(`${c.x}3:${c.x}4`,lab(c),sty(c)); else box(`${c.x}2:${c.x}4`,lab(c),sty(c)); });
+  for(let i=0;i<cols.length;){ const g=cols[i].hd&&cols[i].hd.g1; if(!g){ i++; continue; } let j=i; while(j+1<cols.length&&cols[j+1].hd&&cols[j+1].hd.g1===g) j++;
+    box(`${cols[i].x}2:${cols[j].x}2`, `${G[g].lb[1]}\n${G[g].lb[0]}`, g==='erp'?s.he:s.ha); i=j+1; }
+  rows.forEach((r,i)=>{ const R=st+i, c=SH.calc(r), stt=status(sk,r,c);
+    cols.forEach(col=>{ const x=col.x+R;
+      switch(col.t){
+        case 'idx': put(x,i+1,s.ctr); break;
+        case 'derived': put(x,String(r.name||'').slice(0,8),s.txt,`LEFT(D${R},8)`); break;
+        case 'master': put(x,r[col.k]||'',['unit','loc','color'].includes(col.k)?s.ctr:s.txt); break;
+        case 'erp': put(x,r[col.k]??'',s.numE); break;
+        case 'act': put(x,r[col.k]??'',s.numA); break;
+        case 'calc': put(x,c[col.k],s.calc, col===SH.cols.filter(z=>z.t==='calc')[0]?XF.erp(sk,R):XF.sub(sk,R)); break;
+        case 'diff': put(x,c[col.k],s.diff,XF.diff(sk,R)); break;
+        case 'status': put(x,stName(stt),{...s.ctr,font:{name:'Arial',sz:10,bold:true,color:{rgb:XS.st[stt]}}}); break;
+        default: put(x,r[col.k]||'',s.txt);
+      } }); });
+  const T=st+rows.length; const lead=cols.findIndex(c=>c.t==='erp');
+  box(`A${T}:${cols[lead-1].x}${T}`,'TỔNG CỘNG · 합계',s.totL);
+  cols.slice(lead).forEach(c=>{ if(['erp','act','calc','diff'].includes(c.t)){ let v=0; rows.forEach(r=>{ v+= ['erp','act'].includes(c.t)?n(r[c.k]):n(SH.calc(r)[c.k]); });
+      put(c.x+T, v, c.t==='diff'?{...s.tot,numFmt:'+#,##0;-#,##0;0'}:s.tot, `SUM(${c.x}${st}:${c.x}${T-1})`); } else put(c.x+T,'',s.tot); });
+  box(`A${T+2}:${last}${T+2}`,metaLine(),s.sub);
+  return W.done(cols.map(c=>({wch: c.k==='name'?38: c.k==='code'?17: c.t==='master'||c.t==='derived'?10: c.t==='note'||c.t==='text'?22: c.t==='idx'?5: 12})),[{hpt:30},{hpt:30},{hpt:26},{hpt:44}]);
+}
 function buildSummaryWS(XLSX){
   const W=wsBuilder(XLSX), {put,box}=W, s=XS;
   box('A1:H1','재고 실사 대사 보고서 · BÁO CÁO ĐỐI CHIẾU TỒN KHO THỰC TẾ – ERP',s.title);
   box('A2:H2',metaLine(),s.sub);
-  const XC=SKS.map((k,i)=>String.fromCharCode(66+i)), XT=String.fromCharCode(66+SKS.length);
-  put('A4','Chỉ tiêu · 항목',s.hm); SKS.forEach((k,i)=>put(XC[i]+'4',SHEETS[k].vn+(SHEETS[k].loc?' ('+SHEETS[k].loc+')':''),s.hm)); put(XT+'4','Tổng',s.hm);
-  const st3=SKS.map(sk=>stats(sk));
+  const XC=RS.map((k,i)=>String.fromCharCode(66+i)), XT=String.fromCharCode(66+RS.length);
+  put('A4','Chỉ tiêu · 항목',s.hm); RS.forEach((k,i)=>put(XC[i]+'4',SHEETS[k].vn+(SHEETS[k].loc?' ('+SHEETS[k].loc+')':''),s.hm)); put(XT+'4','Tổng',s.hm);
+  const st3=RS.map(sk=>stats(sk));
   const lines=[['Số mã hàng · 품목 수','n'],['Mã đã kiểm · 실사 품목','checked'],['Mã khớp · 일치','ok'],['Mã thừa · 과잉','over'],['Mã thiếu · 부족','short'],['Chưa kiểm · 미실사','none'],['Tồn ERP · 전산 재고','erp'],['Tồn thực tế · 실물 재고','act'],['Chênh lệch ròng · 순차이','diff'],['Tổng thừa (SL)','overQ'],['Tổng thiếu (SL)','shortQ']];
   let R=5;
   lines.forEach(([l,k])=>{ const g=o=>['ok','over','short','none'].includes(k)?o.cnt[k]:o[k];
@@ -2181,16 +2383,16 @@ function buildSummaryWS(XLSX){
   const chk=st3.reduce((a,o)=>a+o.checked,0), okc=st3.reduce((a,o)=>a+o.cnt.ok,0); put(XT+R,chk?okc/chk:0,{...s.calc,numFmt:'0.0%'}); R++;
   const se=st3.reduce((a,o)=>a+o.erp,0), sa=st3.reduce((a,o)=>a+o.abs,0);
   put('A'+R,'Độ chính xác theo SL (1−Σ|Δ|/ΣERP)',s.kpiL); XC.forEach((x,i)=>put(x+R,st3[i].qacc/100,{...s.num,numFmt:'0.0%'})); put(XT+R,se?Math.max(0,1-sa/se):0,{...s.calc,numFmt:'0.0%'}); R+=2;
-  SKS.forEach(sk=>{
+  RS.forEach(sk=>{
     box(`A${R}:F${R}`,`Theo Model · ${SHEETS[sk].vn}`,{...s.hm,alignment:{horizontal:'left',vertical:'center',indent:1}}); R++;
     ['Model','Số mã','Tồn ERP','Thực tế','Chênh lệch','Mã lệch'].forEach((t,i)=>put(String.fromCharCode(65+i)+R,t,s.hs)); R++;
-    const g={}; S[sk].forEach(r=>{ const c=SHEETS[sk].calc(r), st=status(sk,r,c), m=getModel(sk,r)||'(trống)'; g[m]=g[m]||{n:0,erp:0,act:0,diff:0,bad:0}; g[m].n++; if(st==='none')return; g[m].erp+=c.erp; g[m].act+=c.act; g[m].diff+=c.diff; if(c.diff)g[m].bad++; });
+    const g={}; DS(sk).forEach(r=>{ const c=SHEETS[sk].calc(r), st=status(sk,r,c), m=getModel(sk,r)||'(trống)'; g[m]=g[m]||{n:0,erp:0,act:0,diff:0,bad:0}; g[m].n++; if(st==='none')return; g[m].erp+=c.erp; g[m].act+=c.act; g[m].diff+=c.diff; if(c.diff)g[m].bad++; });
     Object.keys(g).sort().forEach(m=>{ const v=g[m]; put('A'+R,m,s.txt); put('B'+R,v.n,s.num); put('C'+R,v.erp,s.num); put('D'+R,v.act,s.num); put('E'+R,v.diff,s.diff); put('F'+R,v.bad,s.num); R++; });
     R++;
   });
   box(`A${R}:F${R}`,'Công thức tính · 계산식',{...s.hm,alignment:{horizontal:'left',vertical:'center',indent:1}}); R++;
   ['Kho','Công thức chênh lệch','Loại','Ghi chú thay đổi','Người sửa','Thời điểm'].forEach((v,i)=>put(String.fromCharCode(65+i)+R,v,s.hs)); R++;
-  SKS.forEach(sk=>{ const f=(S.formula||{})[sk]||{}, P=fxParts(sk);
+  RS.forEach(sk=>{ const f=(S.formula||{})[sk]||{}, P=fxParts(sk);
     put('A'+R,SHEETS[sk].vn,s.txt); put('B'+R,`ERP: ${P.erp} | Thực tế: ${P.act} | Chênh lệch: ${P.diff}`,s.txt); put('C'+R,fxCustom(sk)?'Tùy chỉnh':'Mặc định',s.ctr);
     put('D'+R,f.note||'',s.txt); put('E'+R,f.by||'',s.txt); put('F'+R,f.at?new Date(f.at).toLocaleString('vi-VN'):'',s.txt); R++; });
   R++; put('E'+R,'담당\nNgười lập',s.hs); put('F'+R,'검토\nKiểm tra',s.hs); put('G'+R,'승인\nPhê duyệt',s.hs);
@@ -2215,6 +2417,8 @@ $('#bXls').onclick=async()=>{
     XLSX.utils.book_append_sheet(wb,buildMatWS(XLSX),'Tồn Vật tư');
     XLSX.utils.book_append_sheet(wb,buildTrayWS(XLSX),'TRAY BOX');
     XLSX.utils.book_append_sheet(wb,buildInpWS(XLSX),'Tồn INPUT');
+    XLSX.utils.book_append_sheet(wb,buildViewWS(XLSX,'inpok'),'INPUT OK');
+    XLSX.utils.book_append_sheet(wb,buildViewWS(XLSX,'inpng'),'INPUT NG');
     XLSX.utils.book_append_sheet(wb,buildOutWS(XLSX),'Tồn OUT');
     if(S.log.length) XLSX.utils.book_append_sheet(wb,buildLogWS(XLSX),'Lịch sử sửa');
     XLSX.writeFile(wb,`Bao_cao_ton_kho_ERP_${fileStamp()}.xlsx`);
@@ -2277,15 +2481,15 @@ function fixSvg(svg,px){
   return svg.replace(/<svg viewBox="0 0 (\d+) (\d+)" width="100%"/,(m,w,h)=>`<svg viewBox="0 0 ${w} ${h}" width="${px}" height="${Math.round(px*h/w)}"`);
 }
 function reportSection(sk, onlyDiff){
-  const SH=SHEETS[sk]; let rows=S[sk].map((r,i)=>({r,i,c:SH.calc(r)})); rows.forEach(o=>o.st=status(sk,o.r,o.c));
+  const SH=SHEETS[sk]; let rows=DS(sk).map((r,i)=>({r,i,c:SH.calc(r)})); rows.forEach(o=>o.st=status(sk,o.r,o.c));
   if(onlyDiff) rows=rows.filter(o=>o.st==='over'||o.st==='short');
   const o=stats(sk);
   const K=(c,l,v,s)=>`<div style="--c:${c}"><span>${l}</span><b>${v}</b><span>${s||''}</span></div>`;
   let h=`<h2><span>${shName(sk)} · ${tsub('tab_'+sk)} (${SH.loc})</span><small>${onlyDiff?t('only_diff')+' · ':''}${t('n_items',{n:rows.length})}</small></h2>`;
   h+=fxNoteHTML(sk,true);
   h+=`<div class="kp">${K('#1B2A4A',t('k_items'),fmt(o.n),t('k_checked_sub',{a:o.checked,b:o.cnt.none}))}${K('#94A3B8',t('k_erp'),fmt(o.erp),lblErp(sk))}${K('#2563EB',t('k_act'),fmt(o.act),lblAct(sk))}${K(o.diff<0?'#DC2626':'#2563EB',t('k_net'),`<span class="${sgn(o.diff)}">${fmtS(o.diff)}</span>`,t('k_net_sub',{a:fmtS(o.overQ),b:fmtS(o.shortQ)}))}${K('#F59E0B',t('k_diffitems'),fmt(o.cnt.over+o.cnt.short),t('k_diff_sub',{a:o.cnt.over,b:o.cnt.short}))}${K('#16A34A',t('k_acc'),o.checked?o.acc.toFixed(1)+'%':'–',t('k_qacc',{a:o.checked?o.qacc.toFixed(1)+'%':'–'}))}</div>`;
-  h+=`<div class="ch"><div><h4>${t('ch_model_r')}</h4>${fixSvg(chartModel(sk,S[sk]),400)}</div><div><h4>${t('ch_status')}</h4>${chartDonut(o)}</div><div><h4>${t('ch_top')}</h4>${fixSvg(chartTop(sk,S[sk]),318)}</div></div>`;
-  const nModels=new Set(S[sk].map(r=>getModel(sk,r))).size; if(nModels>12) h+='<div class="html2pdf__page-break"></div>';
+  h+=`<div class="ch"><div><h4>${t('ch_model_r')}</h4>${fixSvg(chartModel(sk,DS(sk)),400)}</div><div><h4>${t('ch_status')}</h4>${chartDonut(o)}</div><div><h4>${t('ch_top')}</h4>${fixSvg(chartTop(sk,DS(sk)),318)}</div></div>`;
+  const nModels=new Set(DS(sk).map(r=>getModel(sk,r))).size; if(nModels>12) h+='<div class="html2pdf__page-break"></div>';
   const cols=VC(sk).filter(c=>c.t!=='del');
   const W={no:22,model:52,code:72,name:sk==='tray'?96:118,color:sk==='tray'?62:40,unit:24,loc:30,note:sk==='tray'?60:70,st:38};
   h+=`<table class="rt"><colgroup>${cols.map(c=>`<col style="width:${W[c.k]||40}px">`).join('')}</colgroup>${theadHTML(sk,true)}<tbody>`;
@@ -2308,7 +2512,7 @@ function reportSection(sk, onlyDiff){
 }
 function buildReport(){
   const scope=$('#scope').value, onlyDiff=scope==='diff';
-  const sks = scope==='cur' && UI.tab!=='log' ? [UI.tab] : SKS;
+  const sks = scope==='cur' && UI.tab!=='log' ? [UI.tab] : RS;
   const bi = k => LANG==='ko' ? t(k) : `${D[k][1]} · ${t(k)}`;
   let h=`<div class="rpt"><div class="rh"><div class="tl"><span class="tag">SMART FACTORY · WMS</span><h1>${LANG==='ko'?t('rpt_title'):'재고 실사 대사 보고서 · '+t('rpt_title')}</h1><p>${t('subtitle')}</p></div>
   <table class="sign"><tr><td class="v" rowspan="2">결재</td><th>담당<br><small>${tri('Người lập','작성','Prepared')}</small></th><th>검토<br><small>${tri('Kiểm tra','검토','Reviewed')}</small></th><th>승인<br><small>${tri('Phê duyệt','승인','Approved')}</small></th></tr><tr><td></td><td></td><td></td></tr></table></div>
