@@ -293,6 +293,9 @@ body.fold .twrap{max-height:calc(100vh - 205px)}
 #lyTbl td{vertical-align:middle}
 #lyTbl tr.hid td{opacity:.55}
 #lyTbl tr.cus td{background:#F0FDF4}
+.symode{padding:10px 12px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:10px;border:1.5px solid}
+.symode.cf{background:#ECFDF5;color:#065F46;border-color:#6EE7B7}.symode.gas{background:#EFF6FF;color:#1E3A8A;border-color:#93C5FD}
+.symode.none{background:#FFFBEB;color:#92400E;border-color:#FCD34D}.symode.nodb{background:#FEF2F2;color:#991B1B;border-color:#FCA5A5}
 .lymv{width:62px;white-space:nowrap}.lymv button{width:26px;height:24px;border:1px solid #CBD5E1;background:#fff;border-radius:5px;cursor:pointer;font-size:10px;color:#1E3A8A;margin-right:3px}
 .lymv button:hover{background:#1E3A8A;color:#fff;border-color:#1E3A8A}
 .lysg{height:28px;border:1px solid #86C9A0;border-radius:6px;font-family:inherit;font-size:12px;max-width:125px;background:#fff}
@@ -603,6 +606,7 @@ table.grid{border-top:3px solid #2B3954}
 <div class="modal" id="mSync"><div class="mbox">
   <div class="mhead"><b data-i18n="m_sync"></b><button class="btn" id="syClose" data-i18n="close"></button></div>
   <div class="mbody">
+    <div class="symode none" id="syMode"></div>
     <p data-i18n="m_sync_desc"></p>
     <label class="l" data-i18n="m_url"></label><input type="text" id="syUrl" placeholder="https://script.google.com/macros/s/…/exec">
     <label class="chk" style="margin-top:10px"><input type="checkbox" id="syAuto"> <span data-i18n="m_auto"></span></label>
@@ -634,7 +638,15 @@ const D = {
  translate_on:['Đang dịch nội dung','번역 표시 중','Translating content'],
  trans_tip:['Dịch tên hàng & ghi chú theo từ điển thuật ngữ kho (offline). Khi bật, các ô đã dịch chỉ để xem – tắt để sửa.','창고 용어 사전으로 품명·비고를 번역합니다(오프라인). 번역 중에는 해당 칸이 읽기 전용입니다.','Translates item names & remarks with a built-in warehouse glossary (offline). Translated cells are read-only while on.'],
  trans_ro:['Đang hiển thị bản dịch – tắt “Tự dịch nội dung” để sửa','번역 표시 중 – 수정하려면 자동 번역을 끄세요','Showing translation – turn off auto-translate to edit'],
- sync_ok:['Đã đồng bộ','동기화됨','Synced'], sync_btn:['Đồng bộ server','서버 동기화','Server sync'],
+ sync_ok:['Đã đồng bộ','동기화됨','Synced'], sync_nodb:['Chưa gắn D1','D1 미연결','D1 not bound'],
+ s_nodb:['Server Cloudflare chưa gắn cơ sở dữ liệu D1 (biến DB).','Cloudflare 서버에 D1(DB) 바인딩이 없습니다.','Cloudflare server has no D1 binding (DB).'],
+ s_first:['Máy này và server đều đã có số liệu.\nOK = dùng số liệu trên server (khuyên dùng)\nHủy = gộp số liệu đã nhập trên máy này vào server','이 PC와 서버 모두 데이터가 있습니다.\n확인 = 서버 데이터 사용(권장)\n취소 = 이 PC 입력값을 서버에 병합','Both this PC and the server have data.\nOK = use server data (recommended)\nCancel = merge this PC’s entries into the server'],
+ s_pull_confirm2:['Thay toàn bộ số liệu trên máy này bằng bản trên server?','이 PC의 데이터를 서버 데이터로 모두 교체할까요?','Replace all data on this PC with the server copy?'],
+ sy_mode_cf:['✅ Đang đồng bộ qua server Cloudflare của trang này – mọi máy mở cùng địa chỉ dùng chung 1 bộ số liệu (tự gộp khi nhiều người nhập cùng lúc). Không cần nhập URL.','✅ 이 사이트의 Cloudflare 서버로 동기화 중 – 같은 주소를 여는 모든 PC가 하나의 데이터를 공유합니다(동시 입력 자동 병합). URL 입력 불필요.','✅ Syncing via this site’s Cloudflare server – every PC opening this address shares one data set (simultaneous edits are merged). No URL needed.'],
+ sy_mode_gas:['🔗 Đang đồng bộ qua URL riêng (Google Apps Script). Xóa URL và Lưu để dùng server Cloudflare.','🔗 사용자 URL(Google Apps Script)로 동기화 중. URL을 지우고 저장하면 Cloudflare 서버를 사용합니다.','🔗 Syncing via custom URL (Google Apps Script). Clear the URL and save to use the Cloudflare server.'],
+ sy_mode_none:['⚠ Chưa có server – số liệu chỉ lưu trên trình duyệt máy này. Cần gắn D1 cho project Cloudflare (xem hướng dẫn) hoặc nhập URL Google Apps Script.','⚠ 서버 없음 – 데이터가 이 PC 브라우저에만 저장됩니다. Cloudflare 프로젝트에 D1을 연결하거나 Google Apps Script URL을 입력하세요.','⚠ No server – data is stored only in this browser. Bind D1 to the Cloudflare project or enter a Google Apps Script URL.'],
+ sy_mode_nodb:['❌ Đã có code server Cloudflare nhưng chưa gắn cơ sở dữ liệu D1 (Settings → Bindings → D1, tên biến DB) rồi deploy lại.','❌ Cloudflare 서버 코드는 있으나 D1 바인딩이 없습니다 (Settings → Bindings → D1, 변수명 DB) 후 재배포.','❌ Cloudflare server code found but no D1 binding (Settings → Bindings → D1, variable DB), then redeploy.'],
+ sync_btn:['Đồng bộ server','서버 동기화','Server sync'],
  sync_local:['Lưu cục bộ','로컬 저장','Saved locally'],
  sync_err:['Lỗi đồng bộ server','서버 동기화 오류','Server sync error'],
  sync_ing:['Đang đồng bộ…','동기화 중…','Syncing…'],
@@ -773,7 +785,7 @@ const D = {
  m_sync:['Cài đặt đồng bộ server','서버 동기화 설정','Server sync settings'],
  m_sync_desc:['Đồng bộ dữ liệu kiểm kê lên một server (VD: Google Apps Script miễn phí) để nhiều máy cùng xem/nhập. Không có URL → dữ liệu chỉ lưu trên trình duyệt này.','실사 데이터를 서버(예: 무료 Google Apps Script)에 동기화하여 여러 PC에서 함께 조회·입력합니다. URL이 없으면 이 브라우저에만 저장됩니다.','Sync count data to a server (e.g. a free Google Apps Script) so several PCs can view/enter together. Without a URL, data is stored in this browser only.'],
  m_url:['Endpoint URL (GET = tải, POST = lưu JSON)','엔드포인트 URL (GET 불러오기, POST 저장)','Endpoint URL (GET = load, POST = save JSON)'],
- m_auto:['Tự động đồng bộ: đẩy khi lưu, kiểm tra bản mới mỗi 60 giây','자동 동기화: 저장 시 업로드, 60초마다 최신본 확인','Auto-sync: push on save, check for newer data every 60 s'],
+ m_auto:['Tự động đồng bộ: đẩy khi lưu, kiểm tra bản mới mỗi 15 giây','자동 동기화: 저장 시 업로드, 15초마다 최신본 확인','Auto-sync: push on save, check for newer data every 15 s'],
  m_save:['Lưu cài đặt','설정 저장','Save settings'], m_push:['⬆ Đẩy lên server','⬆ 서버로 업로드','⬆ Push to server'], m_pull:['⬇ Tải từ server','⬇ 서버에서 불러오기','⬇ Pull from server'],
  m_gas:['Mẫu Google Apps Script (miễn phí, lưu file JSON trên Google Drive)','Google Apps Script 예제 (무료, Google Drive에 JSON 저장)','Google Apps Script sample (free, stores a JSON file on Google Drive)'],
  m_gas_steps:['1) script.google.com → Dự án mới → dán code. 2) Triển khai → Ứng dụng web → Thực thi: Tôi, Quyền truy cập: Bất kỳ ai. 3) Copy URL /exec dán vào ô trên. ⚠ Ai có URL đều đọc/ghi được dữ liệu – không chia sẻ URL ra ngoài.','1) script.google.com → 새 프로젝트 → 코드 붙여넣기. 2) 배포 → 웹 앱 → 실행: 나, 액세스: 모든 사용자. 3) /exec URL을 위 칸에 붙여넣기. ⚠ URL을 아는 사람은 누구나 읽기/쓰기 가능 – 외부 공유 금지.','1) script.google.com → New project → paste code. 2) Deploy → Web app → Execute as: Me, Access: Anyone. 3) Paste the /exec URL above. ⚠ Anyone with the URL can read/write – keep it internal.'],
@@ -1228,7 +1240,7 @@ function save(){ Object.keys(FXC).forEach(k=>delete FXC[k]);
     S.updatedAt=new Date().toISOString();
     try { localStorage.setItem(LS_KEY, JSON.stringify(S)); LAST_SAVE=new Date(); $('#savedAt').textContent=t('saved_at',{t:LAST_SAVE.toLocaleTimeString(LOC())}); }
     catch(e){ $('#savedAt').textContent=t('save_fail'); }
-    renderSync(); if(SYNC.url && SYNC.auto && !SYNC.muted) schedulePush();
+    renderSync(); if(SYNC.ep && SYNC.auto && !SYNC.muted) schedulePush();
   }, 300);
 }
 
@@ -2588,52 +2600,155 @@ $('#scope').addEventListener('change',()=>{ if($('#mRpt').classList.contains('on
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') $$('.modal.on').forEach(m=>m.classList.remove('on')); });
 $$('.modal').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('on'); }));
 
-/* ---------- server sync ---------- */
-const SYNC={url:'',auto:true,last:null,state:'',muted:false};
-try{ Object.assign(SYNC, JSON.parse(localStorage.getItem('kho_sync')||'{}')); SYNC.state=''; }catch(e){}
+/* ---------- server sync ----------
+   Mode 'cf'  : Cloudflare Pages Function /api/sync + D1 (auto-detected – every PC opening the site shares one data set)
+   Mode 'gas' : custom URL (Google Apps Script) entered in the settings
+   Data is synced in "normalized" form: every date (incl. the one on screen) lives in days{}; the date each PC is viewing stays local.
+   Concurrent edits are merged field-by-field (3-way merge against the last synced copy), so two PCs typing different cells never overwrite each other. */
+const SYNC={url:'',auto:true,last:null,state:'',muted:false,mode:'',ep:''};
+try{ Object.assign(SYNC, JSON.parse(localStorage.getItem('kho_sync')||'{}')); SYNC.state=''; SYNC.mode=''; SYNC.ep=''; }catch(e){}
 function saveSyncCfg(){ try{ localStorage.setItem('kho_sync',JSON.stringify({url:SYNC.url,auto:SYNC.auto,last:SYNC.last})); }catch(e){} }
+const SB_KEY='kho_sync_base';
+let SBASE=null; try{ SBASE=JSON.parse(localStorage.getItem(SB_KEY)||'null'); }catch(e){}
+function setBase(rev,data){ SBASE={rev,data,ep:SYNC.ep}; try{ localStorage.setItem(SB_KEY,JSON.stringify(SBASE)); }catch(e){} }
+if(SBASE&&SBASE.ep===undefined) SBASE=null;
+const JS=x=>JSON.stringify(x===undefined?null:x);
+const clone=x=>JSON.parse(JSON.stringify(x));
+function normS(x){
+  x=clone(x||{});
+  if(!Array.isArray(x.mat)){ x.days=x.days||{}; delete x.updatedAt; if(x.meta) delete x.meta.date; return x; }
+  const d=(x.meta&&x.meta.date)||todayISO(); x.days=x.days||{};
+  x.days[d]={mat:x.mat||[],tray:x.tray||[],inp:x.inp||[],out:x.out||[]};
+  SKS.forEach(k=>delete x[k]); delete x.updatedAt; if(x.meta) delete x.meta.date;
+  return x;
+}
+function denormS(n,prefer){
+  const x=clone(n); x.days=x.days||{}; const ds=Object.keys(x.days).sort();
+  const d= ds.includes(prefer)?prefer : (ds[ds.length-1]||prefer||todayISO());
+  const cur=x.days[d]||{}; delete x.days[d];
+  SKS.forEach(k=>x[k]=cur[k]||[]); x.meta=x.meta||{}; x.meta.date=d; x.log=x.log||[];
+  return x;
+}
+const MASTERK=new Set(['id','code','name','model','unit','loc','color','ed','no']);
+function hasAnyData(n){ return Object.values((n&&n.days)||{}).some(day=>SKS.some(k=>(day[k]||[]).some(r=>Object.entries(r).some(([f,v])=>!MASTERK.has(f)&&v!=null&&v!=='')))); }
+function mergeRows(b,l,sv,byCode){
+  b=b||[]; l=l||[]; sv=sv||[];
+  const key=r=>byCode?(r.code||r.id):r.id;
+  const bm=new Map(b.map(r=>[key(r),r])), lm=new Map(l.map(r=>[key(r),r])), sk=new Set(sv.map(key)), out=[];
+  sv.forEach(sr=>{ const k=key(sr), br=bm.get(k), lr=lm.get(k);
+    if(!lr){ if(!br||byCode) out.push(sr); return; }          // kept on server / deleted on this PC
+    const r={...sr};
+    Object.keys({...lr,...(br||{})}).forEach(f=>{
+      if(byCode){ if(f!=='id'&&f!=='ed'&&lr[f]!=null&&lr[f]!=='') r[f]=lr[f]; }
+      else if(JS(lr[f])!==JS(br?br[f]:undefined)) r[f]=lr[f];
+    });
+    if(lr.ed||sr.ed) r.ed={...(sr.ed||{}),...(lr.ed||{})};
+    out.push(r); });
+  l.forEach(lr=>{ const k=key(lr); if(!sk.has(k)&&!bm.has(k)) out.push(lr); });   // added on this PC
+  return out;
+}
+function merge3(b,l,sv){
+  const byCode=!b; b=b||{days:{}}; sv=sv||{days:{}};
+  const out=clone(sv); out.days=out.days||{};
+  const bd=b.days||{}, ld=l.days||{};
+  new Set([...Object.keys(ld),...Object.keys(bd)]).forEach(d=>{
+    if(!ld[d]){ if(bd[d]&&!byCode) delete out.days[d]; return; }           // date deleted here
+    if(!out.days[d]){ if(bd[d]&&!byCode) return; out.days[d]=ld[d]; return; } // deleted elsewhere / new here
+    const x={...out.days[d]}; SKS.forEach(k=>x[k]=mergeRows(bd[d]&&bd[d][k],ld[d][k],out.days[d][k],byCode)); out.days[d]=x;
+  });
+  Object.keys({...l,...b}).forEach(k=>{
+    if(k==='days'||k==='log') return;
+    if(byCode){ if(out[k]===undefined) out[k]=l[k]; return; }
+    if(JS(l[k])===JS(b[k])) return;
+    const lo=l[k], bo=b[k];
+    if(lo&&typeof lo==='object'&&!Array.isArray(lo)&&bo&&typeof bo==='object'&&!Array.isArray(bo)){
+      const o={...(out[k]||{})}; Object.keys({...lo,...bo}).forEach(f=>{ if(JS(lo[f])!==JS(bo[f])){ if(lo[f]===undefined) delete o[f]; else o[f]=lo[f]; } }); out[k]=o;
+    } else out[k]=lo;
+  });
+  const seen=new Set((out.log||[]).map(e=>e.t+'|'+e.code+'|'+e.f)); out.log=(out.log||[]).slice();
+  (l.log||[]).forEach(e=>{ const k=e.t+'|'+e.code+'|'+e.f; if(!seen.has(k)){ seen.add(k); out.log.push(e); } });
+  out.log.sort((a,c)=>String(c.t).localeCompare(String(a.t))); if(out.log.length>3000) out.log.length=3000;
+  return out;
+}
+function applyN(n){
+  S=denormS(n, S.meta&&S.meta.date); S.updatedAt=new Date().toISOString(); UNDO.length=0;
+  ['wh','by','dept'].forEach(k=>{ const el=$('#m_'+k); if(el) el.value=S.meta[k]||''; });
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); LAST_SAVE=new Date(); }catch(e){}
+  renderAll();
+}
+function hm(d){ return d?new Date(d).toLocaleTimeString(LOC(),{hour:'2-digit',minute:'2-digit',hour12:false}):''; }
 function renderSync(){
   const el=$('#syncSt'); if(!el) return;
-  const hm=d=>d?new Date(d).toLocaleTimeString(LOC(),{hour:'2-digit',minute:'2-digit',hour12:false}):'';
   let cls='local', txt=t('sync_local')+(LAST_SAVE?' '+hm(LAST_SAVE):'');
   if(SYNC.state==='ing'){cls='ing';txt=t('sync_ing');}
   else if(SYNC.state==='err'){cls='err';txt=t('sync_err');}
-  else if(SYNC.url){cls='ok';txt=t('sync_ok')+(SYNC.last?' '+hm(SYNC.last):'');}
+  else if(SYNC.mode==='nodb'){cls='err';txt=t('sync_nodb');}
+  else if(SYNC.ep){cls='ok';txt=t('sync_ok')+(SYNC.last?' '+hm(SYNC.last):'');}
   el.className='tbtn sync '+cls; $('#syncTxt').textContent=txt;
+  const m=$('#syMode'); if(m){ m.className='symode '+(SYNC.mode||'none'); m.textContent=t('sy_mode_'+(SYNC.mode||'none')); }
 }
-let pushT;
-function schedulePush(){ clearTimeout(pushT); pushT=setTimeout(()=>pushServer(true),3000); }
-async function pushServer(silent){
-  if(!SYNC.url){ if(!silent) toast(t('s_nourl'),'err'); return; }
-  SYNC.state='ing'; renderSync();
+async function apiGet(){
+  const r=await fetch(SYNC.ep,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);
+  const j=await r.json();
+  if(SYNC.mode==='cf') return {rev:j.rev||'',data:j.data||null};
+  const d=j&&(j.data||j), ok=d&&(Array.isArray(d.mat)||(d.days&&d.meta));
+  return {rev:j.rev||j.savedAt||'', data: ok?normS(d):null};
+}
+async function apiPost(baseRev,data){
+  const rev=Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const r=await fetch(SYNC.ep,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({app:'kho_erp_recon',baseRev,rev,savedAt:new Date().toISOString(),data})});
+  if(r.status===409) return {conflict:true};
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return {rev};
+}
+let syncBusy=false, syncAgain=false, pushT;
+function schedulePush(){ clearTimeout(pushT); pushT=setTimeout(()=>syncNow(false),2000); }
+const typing=()=>{ const a=document.activeElement; return a&&grid.contains(a)&&a.matches('input,textarea,[contenteditable]'); };
+async function syncNow(manual, force){
+  if(!SYNC.ep){ if(manual) toast(t(SYNC.mode==='nodb'?'s_nodb':'s_nourl'),'err'); return; }
+  if(!manual && typing()){ schedulePush(); return; }
+  if(syncBusy){ syncAgain=true; return; }
+  syncBusy=true; SYNC.state='ing'; renderSync();
+  let changed=false;
   try{
-    const r=await fetch(SYNC.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({app:'kho_erp_recon',savedAt:S.updatedAt||new Date().toISOString(),data:S})});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    SYNC.last=new Date().toISOString(); SYNC.state=''; saveSyncCfg(); renderSync(); if(!silent) toast(t('s_pushed'),'ok');
-  }catch(e){ SYNC.state='err'; renderSync(); if(!silent) toast(t('s_err',{e:esc(e.message)}),'err'); }
+    for(let i=0;i<5;i++){
+      const srv=await apiGet(), L=normS(S), B=SBASE&&SBASE.ep===SYNC.ep?SBASE.data:null, bRev=B?SBASE.rev:null;
+      let target;
+      if(force){ if(!srv.data) throw new Error(t('s_bad')); target=srv.data; }
+      else if(!srv.data) target=L;
+      else if(B&&srv.rev===bRev){ if(JS(L)===JS(B)) break; target=L; }
+      else if(!B) target = hasAnyData(L)&&hasAnyData(srv.data)&&!confirm(t('s_first')) ? merge3(null,L,srv.data)
+                         : hasAnyData(srv.data)||!hasAnyData(L) ? srv.data : merge3(null,L,srv.data);
+      else target = JS(L)===JS(B) ? srv.data : merge3(B,L,srv.data);
+      if(JS(target)!==JS(L)){ applyN(target); changed=true; }
+      if(srv.data&&JS(target)===JS(srv.data)){ setBase(srv.rev,target); break; }
+      const res=await apiPost(srv.rev||'',target);
+      if(res.conflict) continue;
+      setBase(res.rev,target); break;
+    }
+    SYNC.last=new Date().toISOString(); SYNC.state='';
+    if(manual) toast(t(force?'s_pulled':'s_pushed'),'ok'); else if(changed) toast(t('s_newer'),'ok');
+  }catch(e){ SYNC.state='err'; if(manual) toast(t('s_err',{e:esc(e.message)}),'err'); }
+  finally{ syncBusy=false; saveSyncCfg(); renderSync(); if(syncAgain){ syncAgain=false; setTimeout(()=>syncNow(false),400); } }
 }
-async function pullServer(mode){ /* mode: 'ask' | 'auto' */
-  if(!SYNC.url){ if(mode==='ask') toast(t('s_nourl'),'err'); return; }
-  SYNC.state='ing'; renderSync();
+async function detectSync(){
+  SYNC.mode=''; SYNC.ep='';
+  if(SYNC.url){ SYNC.mode='gas'; SYNC.ep=SYNC.url; return; }
+  if(!/^https?:$/.test(location.protocol)) return;
   try{
-    const r=await fetch(SYNC.url,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);
-    const j=await r.json(); const d=j&&(j.data||j);
-    SYNC.state=''; SYNC.last=new Date().toISOString(); saveSyncCfg(); renderSync();
-    if(!d||!Array.isArray(d.mat)||!Array.isArray(d.out)){ if(mode==='ask') toast(t('s_bad'),'err'); return; }
-    const srvT=d.updatedAt||j.savedAt||'';
-    if(mode==='auto'){ if(!srvT || (S.updatedAt && srvT<=S.updatedAt)) return; if(grid.contains(document.activeElement)) return; }
-    else if(!confirm(t('s_pull_confirm',{t:srvT?new Date(srvT).toLocaleString(LOC()):'?'}))) return;
-    S=d; S.log=S.log||[]; S.meta=S.meta||{}; S.updatedAt=srvT||S.updatedAt;
-    ['date','wh','by','dept'].forEach(k=>$('#m_'+k).value=S.meta[k]||'');
-    SYNC.muted=true; save(); setTimeout(()=>SYNC.muted=false,600);
-    renderAll(); toast(t(mode==='auto'?'s_newer':'s_pulled'),'ok');
-  }catch(e){ SYNC.state='err'; renderSync(); if(mode==='ask') toast(t('s_err',{e:esc(e.message)}),'err'); }
+    const r=await fetch('/api/sync',{cache:'no-store'}), ct=r.headers.get('content-type')||'';
+    if(ct.includes('json')){ const j=await r.json();
+      if(r.ok&&j&&'rev' in j){ SYNC.mode='cf'; SYNC.ep='/api/sync'; }
+      else if(j&&j.error==='NO_DB') SYNC.mode='nodb'; }
+  }catch(e){}
 }
-$('#syncSt').onclick=()=>{ $('#syUrl').value=SYNC.url||''; $('#syAuto').checked=!!SYNC.auto; $('#mSync').classList.add('on'); };
+detectSync().then(()=>{ renderSync(); if(SYNC.ep&&SYNC.auto) syncNow(false); });
+$('#syncSt').onclick=()=>{ $('#syUrl').value=SYNC.url||''; $('#syAuto').checked=!!SYNC.auto; renderSync(); $('#mSync').classList.add('on'); };
 $('#syClose').onclick=()=>$('#mSync').classList.remove('on');
-$('#sySave').onclick=()=>{ SYNC.url=$('#syUrl').value.trim(); SYNC.auto=$('#syAuto').checked; SYNC.state=''; saveSyncCfg(); renderSync(); toast(t('s_saved'),'ok'); if(SYNC.url&&SYNC.auto) pullServer('auto'); };
-$('#syPush').onclick=()=>{ SYNC.url=$('#syUrl').value.trim(); saveSyncCfg(); pushServer(false); };
-$('#syPull').onclick=()=>{ SYNC.url=$('#syUrl').value.trim(); saveSyncCfg(); pullServer('ask'); };
+$('#sySave').onclick=async()=>{ SYNC.url=$('#syUrl').value.trim(); SYNC.auto=$('#syAuto').checked; SYNC.state=''; saveSyncCfg(); await detectSync(); renderSync(); toast(t('s_saved'),'ok'); if(SYNC.ep&&SYNC.auto) syncNow(false); };
+$('#syPush').onclick=()=>syncNow(true);
+$('#syPull').onclick=()=>{ if(confirm(t('s_pull_confirm2'))) syncNow(true,true); };
 $('#gasCode').textContent=`// Google Apps Script – WMS sync (lưu JSON trên Google Drive)
 const FILE_NAME = 'kho_erp_sync.json';
 function getFile_() {
@@ -2651,7 +2766,8 @@ function doPost(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }`;
 $('#gasCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('#gasCode').textContent); toast(t('copied'),'ok'); }catch(e){ const r=document.createRange(); r.selectNodeContents($('#gasCode')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); } };
-setInterval(()=>{ if(SYNC.url&&SYNC.auto&&!document.hidden) pullServer('auto'); },60000);
+setInterval(()=>{ if(SYNC.ep&&SYNC.auto&&!document.hidden) syncNow(false); }, 15000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&SYNC.ep&&SYNC.auto) syncNow(false); });
 /* sync between browser tabs on the same PC */
 window.addEventListener('storage',e=>{
   if(e.key!==LS_KEY||!e.newValue||grid.contains(document.activeElement)) return;
@@ -2660,7 +2776,6 @@ window.addEventListener('storage',e=>{
 
 applyI18n();
 renderAll();
-if(SYNC.url&&SYNC.auto) pullServer('auto');
 </script>
 </body>
 </html>
