@@ -300,6 +300,7 @@ body.fold .twrap{max-height:calc(100vh - 205px)}
 .lymv button:hover{background:#1E3A8A;color:#fff;border-color:#1E3A8A}
 .lysg{height:28px;border:1px solid #86C9A0;border-radius:6px;font-family:inherit;font-size:12px;max-width:125px;background:#fff}
 .lysub{display:block;color:#64748B;font-size:10.5px}
+.lytr{display:block;color:#64748B;font-size:10.5px;margin:2px 2px 0}
 #lyTbl tr.lyflash td{background:#FEF3C7!important;transition:background .6s}
 .xdel{border:0;background:#FDECEC;color:#B91C1C;border-radius:6px;padding:4px 9px;cursor:pointer;font-weight:700}
 .daysel{height:32px;min-width:190px;font-weight:700;color:#0F1E3D}
@@ -695,7 +696,7 @@ const D = {
  dd_done_clear:['Đã xóa số liệu ngày {d} (giữ danh mục mã hàng).','{d} 수량을 삭제했습니다 (품목 유지).','Cleared the data of {d} (item list kept).'],
  l_nd:['Tạo ngày kiểm kê {d}','실사 일자 생성 {d}','Created count date {d}'], l_dd:['Xóa số liệu ngày {d}','날짜 데이터 삭제 {d}','Deleted date {d}'],
  ly_btn:['Cấu trúc bảng','표 구성','Table layout'], ly_title:['Cấu trúc bảng','표 구성 편집','Table layout'],
- ly_hint:['Sửa tay cấu trúc bảng của kho này: <b>đổi tên đề mục</b> cột/nhóm, <b>ẩn/hiện</b> cột, <b>thêm cột mới</b> (số ERP, số thực tế hoặc cột chữ). Cột số mới tự tham gia công thức (chỉnh tiếp ở ⚙ Công thức), được nhận khi upload theo đúng tên tiêu đề và được thêm vào file Excel xuất ra.','이 창고의 표 구성을 직접 편집: 열/그룹 <b>제목 변경</b>, 열 <b>숨기기/표시</b>, <b>새 열 추가</b>(ERP 수량, 실물 수량, 텍스트). 새 수량 열은 계산식에 자동 포함되며(⚙ 계산식에서 조정) 업로드 시 제목으로 인식되고 엑셀에도 추가됩니다.','Edit this warehouse table by hand: <b>rename</b> column/group headings, <b>show/hide</b> columns, <b>add new columns</b> (ERP qty, physical qty or text). New numeric columns join the formula (adjust in ⚙ Formula), are recognised by header name on upload and added to the Excel export.'],
+ ly_hint:['Tên cột tự dịch sang 한국어/English theo nút ngôn ngữ; muốn tự đặt bản dịch thì gõ <b>Tiếng Việt | 한국어 | English</b>. Sửa tay cấu trúc bảng của kho này: <b>đổi tên đề mục</b> cột/nhóm, <b>ẩn/hiện</b> cột, <b>thêm cột mới</b> (số ERP, số thực tế hoặc cột chữ). Cột số mới tự tham gia công thức (chỉnh tiếp ở ⚙ Công thức), được nhận khi upload theo đúng tên tiêu đề và được thêm vào file Excel xuất ra.','이 창고의 표 구성을 직접 편집: 열/그룹 <b>제목 변경</b>, 열 <b>숨기기/표시</b>, <b>새 열 추가</b>(ERP 수량, 실물 수량, 텍스트). 새 수량 열은 계산식에 자동 포함되며(⚙ 계산식에서 조정) 업로드 시 제목으로 인식되고 엑셀에도 추가됩니다.','Edit this warehouse table by hand: <b>rename</b> column/group headings, <b>show/hide</b> columns, <b>add new columns</b> (ERP qty, physical qty or text). New numeric columns join the formula (adjust in ⚙ Formula), are recognised by header name on upload and added to the Excel export.'],
  ly_cols:['Cột của bảng','표의 열','Table columns'], ly_groups:['Đề mục nhóm','그룹 제목','Group headings'], ly_add:['Thêm cột mới','새 열 추가','Add a new column'],
  ly_name:['Tên hiển thị (để trống = tên gốc)','표시 이름 (비우면 기본값)','Display name (blank = default)'], ly_show:['Hiện','표시','Show'], ly_del:['Xóa','삭제','Delete'],
  ly_name_ph:['Tên cột mới, VD: Tồn kho tạm Line 2','새 열 이름, 예: 2라인 임시 재고','New column name, e.g. Temp stock Line 2'],
@@ -883,6 +884,41 @@ function trText(s){
   out=out.replace(/\u0001(\d+)\u0002/g,(m,i)=>keep[+i]).replace(/_/g,' ').replace(/\s*;\s*/g,'; ').replace(/\s{2,}/g,' ').trim();
   TRC.set(key,out); return out;
 }
+/* header names typed by the user (custom columns / renamed headings) → [vi, ko, en]
+   "Tên Việt | 한국어 | English" in the name overrides the automatic translation */
+const HPH = [
+ ['chưa đăng ký','미등록','unregistered','chua dang ky','chưa đăng kí','chua dang ki'], ['đã đăng ký','등록 완료','registered','đã đăng kí'],
+ ['nguyên vật liệu','원자재','raw material','nguyen vat lieu','nvl'], ['vật tư','자재','materials','vat tu'], ['bán thành phẩm','반제품','semi-finished','ban thanh pham','btp'],
+ ['thành phẩm','완제품','finished goods','thanh pham','tp'], ['linh kiện','부품','parts','linh kien'], ['phụ liệu','부자재','sub-materials','phu lieu'],
+ ['ngoại quan','외관','visual','ngoai quan'], ['thao tác','작업','handling','thao tac'], ['công đoạn','공정','process','cong doan'], ['gia công','가공','processing','gia cong'],
+ ['lắp ráp','조립','assembly','lap rap'], ['kiểm tra','검사','inspection','kiem tra'], ['đầu vào','입고','incoming','dau vao'], ['đầu ra','출고','outgoing','dau ra'],
+ ['chờ xử lý','처리 대기','pending','cho xu ly'], ['chờ kiểm tra','검사 대기','awaiting inspection','cho kiem tra'], ['chờ đi phiếu','전표 대기','awaiting slip'], ['chờ trả','반납 대기','awaiting return'],
+ ['chờ hủy','폐기 대기','awaiting scrap'], ['chờ','대기','waiting','cho'], ['đã trả','반납 완료','returned','da tra'], ['trả về','반품','returned'], ['trả','반납','return'],
+ ['tái chế','재생','recycled','tai che'], ['sửa chữa','수리','repair','sua chua'], ['hủy','폐기','scrap','huy'], ['thất lạc','분실','missing'], ['hư hỏng','파손','damaged'],
+ ['tồn kho','재고','stock','ton kho'], ['tồn','재고','stock','ton'], ['kho','창고','warehouse'], ['tạm','임시','temporary','tam'], ['phiếu nhập','입고 전표','receipt slip'],
+ ['phiếu xuất','출고 전표','issue slip'], ['phiếu','전표','slip','phieu'], ['nhập','입고','receipt','nhap'], ['xuất','출고','issue','xuat'], ['mượn','차용','borrowed','muon'], ['cho mượn','대여','lent'],
+ ['chênh lệch','차이','variance','chenh lech'], ['tổng','합계','total','tong'], ['số lượng','수량','quantity','so luong'], ['hàng đạt','양품','good'], ['hàng lỗi','불량','defective'], ['lỗi','불량','defect','loi'],
+ ['đạt','양품','good','dat'], ['khác','기타','other','khac'], ['ghi chú','비고','note','ghi chu'], ['đang','진행 중','in progress'], ['trên','위','on'], ['tại','현','at','tai'], ['đã','완료','done'],
+ ['line','라인','line'], ['ca','교대','shift'], ['ngày','일','day','ngay'], ['tháng','월','month'], ['khách hàng','고객','customer'], ['nhà cung cấp','공급사','supplier','ncc'],
+ ['mẫu','샘플','sample','mau'], ['dự phòng','예비','spare','du phong'], ['bảo hành','보증','warranty'], ['đóng gói','포장','packing','dong goi'], ['khay','트레이','tray'], ['hộp','박스','box'],
+ ['rework','리워크','rework','rw'], ['ok','OK','OK'], ['ng','NG','NG'], ['erp','ERP','ERP'], ['và','및','and','va'], ['của','의','of'], ['cho','용','for'], ['chưa','미','not yet','chua'],
+];
+const HPH_RE = HPH.map(p=>{ const vi=[p[0],...p.slice(3)]; return {p,len:Math.max(...vi.map(x=>x.length)),res:vi.map(x=>new RegExp('(?<![\\p{L}\\p{N}])'+escRe(x)+'(?![\\p{L}\\p{N}])','giu'))}; })
+  .sort((a,b)=>b.len-a.len);
+const HTC=new Map();
+function trHead(name){
+  name=String(name||'').trim(); if(HTC.has(name)) return HTC.get(name);
+  let res;
+  if(name.includes('|')){ const pp=name.split('|').map(x=>x.trim()); res=[pp[0], pp[1]||pp[0], pp[2]||pp[0]]; }
+  else res=[0,1,2].map(ti=>{ if(ti===0) return name;
+    const keep=[], mark=v=>{ keep.push(v); return '\u0001'+(keep.length-1)+'\u0002'; };
+    let out=name.replace(/\b[A-Z]{0,4}\d[A-Z0-9]*(?:-[A-Z0-9]+)*/g,m=>mark(m));
+    for(const {p,res:rs} of HPH_RE) rs.forEach(re=>{ out=out.replace(re,()=>mark(p[ti])); });
+    out=out.replace(/(?<![A-Za-z])[A-Z]{2,}(?![A-Za-z])/g,w=>{ const g=GLOSS[w]; return g?mark(g[ti]):w; });
+    return out.replace(/\u0001(\d+)\u0002/g,(m,i)=>keep[+i]).replace(/\s{2,}/g,' ').trim(); });
+  HTC.set(name,res); return res;
+}
+const hName = nm => trHead(nm)[0];          // the name used for matching upload headers
 const TR = () => UI.trans;
 const dispName = r => TR() ? trText(r.name) : r.name;
 const dispNote = r => TR() ? trText(r.note) : r.note;
@@ -1281,10 +1317,10 @@ function addLog(sh,code,f,o,nv,fk,fv){ S.log.unshift({t:new Date().toISOString()
 function theadHTML(sk, forReport){
   const cols=VC(sk).filter(c=>!(forReport&&c.t==='del')), G=GRP(sk), Lr=((S.layout||{})[sk]||{});
   const lab=c=>{ if(c.t==='del') return ''; const lb=c.hd&&c.hd.lb;
-    if(c.custom) return `${esc(c.lbl)}<span class="kr">${tri('cột bổ sung','추가 열','custom')}</span>`;
-    if(Lr.ren&&Lr.ren[c.k]) return `${esc(Lr.ren[c.k])}<span class="kr">${lb?esc(tri(...lb)):''}</span>`;
+    if(c.custom) return hl(...trHead(c.lbl).map(esc));
+    if(Lr.ren&&Lr.ren[c.k]) return hl(...trHead(Lr.ren[c.k]).map(esc));
     return lb?hl(...lb):esc(c.lbl); };
-  const glab=gid=>{ const g=G[gid]; if(Lr.gren&&Lr.gren[gid]) return `${esc(Lr.gren[gid])}<span class="kr">${esc(tri(...g.lb))}</span>`; return hl(...g.lb)+(g.sub?`<span class="kr">${g.sub}</span>`:''); };
+  const glab=gid=>{ const g=G[gid]; if(Lr.gren&&Lr.gren[gid]) return hl(...trHead(Lr.gren[gid]).map(esc)); return hl(...g.lb)+(g.sub?`<span class="kr">${g.sub}</span>`:''); };
   let r1='',r2='',r3='';
   for(let i=0;i<cols.length;){
     const c=cols[i], g1=c.hd&&c.hd.g1;
@@ -1597,13 +1633,13 @@ function lyDraw(){
     const canHide=!NOHIDE.includes(c.t)&&!NOHIDEK.includes(c.k);
     const gsel = c.custom&&c.t==='act'&&SUBG.length ? `<select class="lysg" data-cg="${c.k}"><option value="">${tri('Thực tế','실물','Physical')}</option>${SUBG.map(g=>`<option value="${g}" ${c.hd.g2===g?'selected':''}>› ${esc(G[g].lb[0])}</option>`).join('')}</select>` : grpName(c)+(c.hd.g2?`<small class="lysub">› ${esc(G[c.hd.g2].lb[0])}</small>`:'');
     return `<tr class="${c.hidden?'hid':''}${c.custom?' cus':''}"><td class="lymv"><button data-mv="${c.k}" data-d="-1" title="${tri('Chuyển sang trái','왼쪽으로','Move left')}">▲</button><button data-mv="${c.k}" data-d="1" title="${tri('Chuyển sang phải','오른쪽으로','Move right')}">▼</button></td><td style="width:130px">${gsel}</td><td style="width:40px">${c.x?`<span class="cl">${c.x}</span>`:''}</td>
-      <td><input type="text" data-ren="${c.k}" value="${esc(val)}" placeholder="${esc(def)}"></td>
+      <td><input type="text" data-ren="${c.k}" value="${esc(val)}" placeholder="${esc(def)}">${val?`<small class="lytr" data-trp="${c.k}">${lyTrTxt(val)}</small>`:`<small class="lytr" data-trp="${c.k}"></small>`}</td>
       <td style="width:90px;text-align:center"><label class="chk" style="justify-content:center"><input type="checkbox" data-show="${c.k}" ${c.hidden?'':'checked'} ${canHide?'':'disabled'}> ${t('ly_show')}</label></td>
       <td style="width:80px;text-align:center">${c.custom?`<button class="xdel" data-del="${c.k}">${t('ly_del')}</button>`:''}</td></tr>`; }).join('');
   $('#lyTbl').innerHTML=`<table><thead><tr><th style="width:62px">${tri('Vị trí','순서','Order')}</th><th>${t('fx_grp')}</th><th>${tri('Cột','열','Col')}</th><th>${t('ly_name')}</th><th>${t('ly_show')}</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
   const used=new Set(cols.flatMap(c=>[c.hd.g1,c.hd.g2]).filter(Boolean));
   $('#lyGroups').innerHTML=[...used].map(g=>`<label>${esc(G[g].lb[0])}<input type="text" data-gren="${g}" value="${esc((LYD.gren||{})[g]||'')}" placeholder="${esc(G[g].lb[0])}"></label>`).join('');
-  $$('#lyTbl [data-ren]').forEach(i=>i.oninput=()=>{ LYD.ren=LYD.ren||{}; const v=i.value.trim(); const cu=(LYD.custom||[]).find(c=>c.k===i.dataset.ren);
+  $$('#lyTbl [data-ren]').forEach(i=>i.oninput=()=>{ const tp=$(`#lyTbl [data-trp="${i.dataset.ren}"]`); if(tp) tp.innerHTML=lyTrTxt(i.value.trim()); LYD.ren=LYD.ren||{}; const v=i.value.trim(); const cu=(LYD.custom||[]).find(c=>c.k===i.dataset.ren);
     if(cu){ if(v) cu.lbl=v; } else if(v) LYD.ren[i.dataset.ren]=v; else delete LYD.ren[i.dataset.ren]; });
   $$('#lyTbl [data-show]').forEach(i=>i.onchange=()=>{ LYD.hide=LYD.hide||{}; if(i.checked) delete LYD.hide[i.dataset.show]; else LYD.hide[i.dataset.show]=true; i.closest('tr').classList.toggle('hid',!i.checked); });
   $$('#lyTbl [data-del]').forEach(b=>b.onclick=()=>{ const k=b.dataset.del; if(!confirm(t('ly_del_confirm'))) return; LYD.custom=LYD.custom.filter(c=>c.k!==k); if(LYD.cg) delete LYD.cg[k]; if(LYD.order) LYD.order=LYD.order.filter(x=>x!==k); if(LYD.hide) delete LYD.hide[k]; if(LYD.ren) delete LYD.ren[k]; lyDraw(); });
@@ -1613,6 +1649,7 @@ function lyDraw(){
 }
 /* move a column one step left/right, inside its own zone: info columns ↔ info, ERP ↔ ERP, physical ↔ physical, variance/status/note ↔ each other.
    A column of a sub-group (Tồn OK, Tồn NG…) moves inside that sub-group; other columns jump over a whole sub-group block. */
+function lyTrTxt(v){ if(!v) return ''; const h=trHead(v); return `🇰🇷 ${esc(h[1])} · 🇺🇸 ${esc(h[2])}`; }
 function lyMove(k,dir){
   const sk=UI.tab, cols=composeCols(sk,LYD), keys=cols.map(c=>c.k), i=keys.indexOf(k), c=cols[i]; if(i<0) return;
   const fg=cols.findIndex(x=>x.hd.g1);
@@ -2018,7 +2055,7 @@ function analyzeSheet(XLSX, ws, nm){
 function mapSheet(A, sk){
   const SH=SHEETS[sk], want=SH.cols.filter(c=>['master','erp','act','note','text'].includes(c.t)).map(c=>c.k);
   const fns={...MATCH.common, ...(MATCH[sk]||{})};
-  SH.cols.forEach(c=>{ if(!c.custom && !(c.lbl0&&c.lbl!==c.lbl0)) return; const nm=nz(c.lbl), old=fns[c.k];
+  SH.cols.forEach(c=>{ if(!c.custom && !(c.lbl0&&c.lbl!==c.lbl0)) return; const nm=nz(hName(c.lbl)), old=fns[c.k];
     if(nm.length>=2) fns[c.k]=x=> x===nm || x.endsWith(' '+nm) || (nm.length>=4&&x.includes(nm)) || (old?old(x):false); });
   const map={code:A.codeC}, used=new Set([A.codeC]);
   const spec=want.filter(k=>!(k in MATCH.common)).sort((a,b)=>(SH.cols.find(c=>c.k===b).custom?1:0)-(SH.cols.find(c=>c.k===a).custom?1:0));
@@ -2272,11 +2309,11 @@ function buildMatWS(XLSX){
 function xlLayout(W, sk, hTop, hBot, R){
   const SH=SHEETS[sk], st=SH.start, s=XS;
   SH.cols.filter(c=>c.custom).forEach(c=>{ const x=c.x;
-    W.box(`${x}${hTop}:${x}${hBot}`, `${c.lbl}\n(${c.t==='erp'?'ERP':c.t==='act'?'Thực tế':'Thông tin'} · bổ sung)`, c.t==='erp'?s.he:c.t==='act'?s.ha:s.hs);
+    W.box(`${x}${hTop}:${x}${hBot}`, (h=>h[1]&&h[1]!==h[0]?`${h[1]}\n${h[0]}`:h[0])(trHead(c.lbl)), c.t==='erp'?s.he:c.t==='act'?s.ha:s.hs);
     DS(sk).forEach((r,i)=>W.put(x+(st+i), c.t==='text'?(r[c.k]||''):(r[c.k]??''), c.t==='text'?s.txt:(c.t==='erp'?s.numE:s.numA)));
     if(c.t!=='text') W.put(x+R, DS(sk).reduce((a,r)=>a+n(r[c.k]),0), s.tot, `SUM(${x}${st}:${x}${R-1})`); else W.put(x+R,'',s.tot); });
   SH.cols.filter(c=>!c.custom&&c.lbl0&&c.lbl!==c.lbl0&&c.x).forEach(c=>{
-    for(let r=hBot;r>=hTop;r--){ const cell=W.ws[c.x+r]; if(cell&&cell.v!==''&&cell.v!==null&&cell.v!==undefined){ cell.v=`${c.lbl}\n(${String(cell.v).split('\n')[0]})`; break; } } });
+    for(let r=hBot;r>=hTop;r--){ const cell=W.ws[c.x+r]; if(cell&&cell.v!==''&&cell.v!==null&&cell.v!==undefined){ cell.v=(h=>h[1]&&h[1]!==h[0]?`${h[1]}\n${h[0]}`:h[0])(trHead(c.lbl)); break; } } });
 }
 function ws_fixTotals(W,letters,R,rows,sk){
   const SH=SHEETS[sk];
@@ -2356,7 +2393,7 @@ function buildViewWS(XLSX, sk){
   const cols=SH.cols.filter(c=>c.x&&c.t!=='del'), last=xlCol(Math.max(...cols.map(c=>colIdx(c.x)))-1), G=GRP(sk);
   box(`A1:${last}1`,`BÁO CÁO ${SH.vn.toUpperCase()}  ·  ${SH.kr} (Thực tế vs ERP)`,s.title);
   const sty=c=>{ const g=c.hd&&c.hd.g1; return g==='erp'?s.he: g==='act'?(c.hd.cls==='g-act2'?s.ha2:s.ha): c.t==='diff'?s.hdf: ['status','note','text'].includes(c.t)?s.hs: s.hm; };
-  const lab=c=>{ if(c.custom||c.lbl!==c.lbl0) return c.lbl; const lb=c.hd&&c.hd.lb; return c.t==='diff'?`차이\n${c.lbl}`: lb?`${lb[1]}\n${lb[0]}`:c.lbl; };
+  const lab=c=>{ if(c.custom||c.lbl!==c.lbl0) return (h=>h[1]&&h[1]!==h[0]?`${h[1]}\n${h[0]}`:h[0])(trHead(c.lbl)); const lb=c.hd&&c.hd.lb; return c.t==='diff'?`차이\n${c.lbl}`: lb?`${lb[1]}\n${lb[0]}`:c.lbl; };
   cols.forEach(c=>{ const g=c.hd&&c.hd.g1; if(g) box(`${c.x}3:${c.x}4`,lab(c),sty(c)); else box(`${c.x}2:${c.x}4`,lab(c),sty(c)); });
   for(let i=0;i<cols.length;){ const g=cols[i].hd&&cols[i].hd.g1; if(!g){ i++; continue; } let j=i; while(j+1<cols.length&&cols[j+1].hd&&cols[j+1].hd.g1===g) j++;
     box(`${cols[i].x}2:${cols[j].x}2`, `${G[g].lb[1]}\n${G[g].lb[0]}`, g==='erp'?s.he:s.ha); i=j+1; }
